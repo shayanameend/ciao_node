@@ -1,4 +1,3 @@
-import chalk from "chalk";
 import type { NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { env } from "../env.js";
