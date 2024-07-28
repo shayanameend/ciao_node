@@ -1,10 +1,16 @@
-import type { User } from "@prisma/client";
 import type { Request, Response } from "express";
+import type { JWTUserType } from "./validators/user.validator.js";
 
-export type Data = number | string | boolean | Data[] | { [key: string]: Data };
+export type Data =
+	| number
+	| string
+	| boolean
+	| Date
+	| Data[]
+	| { [key: string]: Data };
 
 export interface ExtendedRequest extends Request {
-	user?: User;
+	user?: JWTUserType;
 }
 
 export interface ExtendedResponse extends Response {

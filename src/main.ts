@@ -9,7 +9,7 @@ import type { Socket } from "socket.io";
 import { Server as SocketServer } from "socket.io";
 import { appRouter } from "./app.js";
 import { env } from "./env.js";
-import { extendedResponse } from "./middlewares/extended_response.js";
+import { extendResponse } from "./middlewares/extend_response.js";
 import { useSocketIO } from "./socket.js";
 
 const app: Express = express();
@@ -43,7 +43,7 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
-app.use(extendedResponse);
+app.use(extendResponse);
 app.use(appRouter);
 
 console.log(chalk.blue("Setting Up Socket IO"));

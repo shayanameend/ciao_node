@@ -1,7 +1,7 @@
 import type { NextFunction } from "express";
 import type { ExtendedRequest, ExtendedResponse } from "../types.js";
 
-export function extendedResponse(
+export function extendResponse(
 	_req: ExtendedRequest,
 	res: ExtendedResponse,
 	next: NextFunction,
