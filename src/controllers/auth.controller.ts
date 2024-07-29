@@ -70,15 +70,18 @@ export async function register(req: ExtendedRequest, res: ExtendedResponse) {
 			env.JWT_SECRET,
 		);
 
-		return res.created?.(
-			{
-				user: user,
+		return res.created?.({
+			data: {
+				user: {
+					id: user.id,
+					email: user.email,
+					deviceToken: device.token,
+					deviceType: device.os,
+				},
 				token: jwtToken,
 			},
-			{
-				message: "User registered successfully",
-			},
-		);
+			message: "User registered successfully",
+		});
 	} catch (error) {
 		console.error(error);
 
@@ -149,15 +152,18 @@ export async function login(req: ExtendedRequest, res: ExtendedResponse) {
 			env.JWT_SECRET,
 		);
 
-		return res.success?.(
-			{
-				user: user,
+		return res.success?.({
+			data: {
+				user: {
+					id: user.id,
+					email: user.email,
+					deviceToken: device.token,
+					deviceType: device.os,
+				},
 				token: jwtToken,
 			},
-			{
-				message: "User logged in successfully",
-			},
-		);
+			message: "User logged in successfully",
+		});
 	} catch (error) {
 		console.error(error);
 
@@ -198,12 +204,9 @@ export async function logout(req: ExtendedRequest, res: ExtendedResponse) {
 			},
 		});
 
-		return res.success?.(
-			{},
-			{
-				message: "User logged out successfully",
-			},
-		);
+		return res.success?.({
+			message: "User logged out successfully",
+		});
 	} catch (error) {
 		console.error(error);
 

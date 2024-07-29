@@ -14,11 +14,11 @@ export interface ExtendedRequest extends Request {
 }
 
 export interface ExtendedResponse extends Response {
-	success?: (data: Data, meta: { message?: string }) => void;
-	created?: (data: Data, meta: { message?: string }) => void;
-	noContent?: (meta: { message?: string }) => void;
-	badRequest?: (meta: { message?: string }) => void;
-	unauthorized?: (meta: { message?: string }) => void;
-	notFound?: (meta: { message?: string }) => void;
-	internalServerError?: (meta: { message?: string }) => void;
+	success?: (init: { data?: Data; message?: string }) => void;
+	created?: (init: { data?: Data; message?: string }) => void;
+	noContent?: (init: { data?: Data; message?: string }) => void;
+	badRequest?: (init: { data?: Data; message?: string }) => void;
+	unauthorized?: (init: { data?: Data; message?: string }) => void;
+	notFound?: (init: { data?: Data; message?: string }) => void;
+	internalServerError?: (init: { data?: Data; message?: string }) => void;
 }
