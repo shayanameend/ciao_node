@@ -1,6 +1,6 @@
+import chalk from "chalk";
 import type { NextFunction } from "express";
 import type { ExtendedRequest, ExtendedResponse } from "../types.js";
-import chalk from "chalk";
 
 export function responseHandler(
 	{ debugLevel }: { debugLevel: 0 | 1 | 2 },

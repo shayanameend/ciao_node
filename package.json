@@ -4,9 +4,9 @@
 	"version": "1.0.0",
 	"author": "Shayan Ameen",
 	"license": "MIT",
-	"main": "src/main.ts",
+	"main": "dist/main.js",
 	"type": "module",
-	"packageManager": "pnpm@9.4.0",
+	"packageManager": "pnpm@9.6.0",
 	"scripts": {
 		"prod:build": "tsc",
 		"prod:start": "node --env-file=.env dist/main.js",
