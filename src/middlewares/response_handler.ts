@@ -3,12 +3,13 @@ import type { NextFunction } from "express";
 import type { ExtendedRequest, ExtendedResponse } from "../types.js";
 
 export function responseHandler(
-	{ debugLevel }: { debugLevel: 0 | 1 | 2 },
-	_req: ExtendedRequest,
+	{ debugLevel }: { debugLevel: 0 | 1 | 2 | 3 },
+	req: ExtendedRequest,
 	res: ExtendedResponse,
 	next: NextFunction,
 ) {
 	res.success = ({ data = {}, message = "Success!" }) => {
+		debugLevel > 2 && console.log(chalk.green(JSON.stringify(req.body)));
 		debugLevel > 0 && console.log(chalk.green(message));
 		debugLevel > 1 && console.log(chalk.green(JSON.stringify(data)));
 
@@ -19,6 +20,7 @@ export function responseHandler(
 	};
 
 	res.created = ({ data = {}, message = "Created!" }) => {
+		debugLevel > 2 && console.log(chalk.green(JSON.stringify(req.body)));
 		debugLevel > 0 && console.log(chalk.green(message));
 		debugLevel > 1 && console.log(chalk.green(JSON.stringify(data)));
 
@@ -29,6 +31,7 @@ export function responseHandler(
 	};
 
 	res.noContent = ({ data = {}, message = "No Content!" }) => {
+		debugLevel > 2 && console.log(chalk.green(JSON.stringify(req.body)));
 		debugLevel > 0 && console.log(chalk.green(message));
 		debugLevel > 1 && console.log(chalk.green(JSON.stringify(data)));
 
@@ -39,6 +42,7 @@ export function responseHandler(
 	};
 
 	res.badRequest = ({ data = {}, message = "Bad Request!" }) => {
+		debugLevel > 2 && console.log(chalk.red(JSON.stringify(req.body)));
 		debugLevel > 0 && console.log(chalk.red(message));
 		debugLevel > 1 && console.log(chalk.red(JSON.stringify(data)));
 
@@ -49,6 +53,7 @@ export function responseHandler(
 	};
 
 	res.unauthorized = ({ data = {}, message = "Unauthorized!" }) => {
+		debugLevel > 2 && console.log(chalk.red(JSON.stringify(req.body)));
 		debugLevel > 0 && console.log(chalk.red(message));
 		debugLevel > 1 && console.log(chalk.red(JSON.stringify(data)));
 
@@ -59,6 +64,7 @@ export function responseHandler(
 	};
 
 	res.notFound = ({ data = {}, message = "Not Found!" }) => {
+		debugLevel > 2 && console.log(chalk.red(JSON.stringify(req.body)));
 		debugLevel > 0 && console.log(chalk.red(message));
 		debugLevel > 1 && console.log(chalk.red(JSON.stringify(data)));
 
@@ -72,6 +78,7 @@ export function responseHandler(
 		data = {},
 		message = "Internal Server Error!",
 	}) => {
+		debugLevel > 2 && console.log(chalk.red(JSON.stringify(req.body)));
 		debugLevel > 0 && console.log(chalk.red(message));
 		debugLevel > 1 && console.log(chalk.red(JSON.stringify(data)));
 
