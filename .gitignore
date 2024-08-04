@@ -179,4 +179,4 @@ dist
 .pnp.*
 
 # prisma
-prisma/dev.db
+db/
