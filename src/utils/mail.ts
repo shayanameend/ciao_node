@@ -1,34 +1,35 @@
 import { CourierClient } from "@trycourier/courier";
+import { env } from "../env.js";
 
 const courier = new CourierClient({
-  authorizationToken: "pk_test_TJC1FMJ46MMR6KJV308C8AC4CQBC",
+	authorizationToken: env.COURIER_AUTH_TOKEN,
 });
 
 export async function sendEmail({
-  name,
-  email,
-  body,
+	name,
+	email,
+	body,
 }: {
-  name: string;
-  email: string;
-  body: string;
+	name: string;
+	email: string;
+	body: string;
 }) {
-  const { requestId } = await courier.send({
-    message: {
-      to: {
-        data: {
-          name,
-        },
-        email,
-      },
-      content: {
-        title: "Hey {{name}} 👋",
-        body,
-      },
-      routing: {
-        method: "single",
-        channels: ["email"],
-      },
-    },
-  });
+	const { requestId } = await courier.send({
+		message: {
+			to: {
+				data: {
+					name,
+				},
+				email,
+			},
+			content: {
+				title: "Hey {{name}} 👋",
+				body,
+			},
+			routing: {
+				method: "single",
+				channels: ["email"],
+			},
+		},
+	});
 }

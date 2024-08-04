@@ -1,10 +1,10 @@
 import { Router } from "express";
 import {
-  login,
-  logout,
-  register,
-  resendOTP,
-  verifyOTP,
+	login,
+	logout,
+	register,
+	resendOTP,
+	verifyOTP,
 } from "../controllers/auth.controller.js";
 import { authenticate } from "../middlewares/authenticate.js";
 

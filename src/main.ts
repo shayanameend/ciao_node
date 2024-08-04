@@ -17,27 +17,27 @@ const app: Express = express();
 let httpServer: HttpServer;
 
 switch (env.NODE_ENV) {
-  case "development":
-    console.log(chalk.yellow("Setting Up Development Http Server"));
-    httpServer = createDevelopmentServer(app);
-    break;
-  case "production":
-    console.log(chalk.blue("Setting Up Production Https Server"));
-    httpServer = createProductionServer(
-      {
-        cert: env.SSL_CERT,
-        key: env.SSL_KEY,
-      },
-      app,
-    );
-    break;
+	case "development":
+		console.log(chalk.yellow("Setting Up Development Http Server"));
+		httpServer = createDevelopmentServer(app);
+		break;
+	case "production":
+		console.log(chalk.blue("Setting Up Production Https Server"));
+		httpServer = createProductionServer(
+			{
+				cert: env.SSL_CERT,
+				key: env.SSL_KEY,
+			},
+			app,
+		);
+		break;
 }
 
 console.log(chalk.blue("Setting Up Express App"));
 app.use(
-  cors({
-    origin: "*",
-  }),
+	cors({
+		origin: "*",
+	}),
 );
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
@@ -48,19 +48,19 @@ app.use(appRouter);
 
 console.log(chalk.blue("Setting Up Socket IO"));
 const io: SocketServer = new SocketServer(httpServer, {
-  cors: {
-    origin: "*",
-  },
+	cors: {
+		origin: "*",
+	},
 });
 
 io.on("connection", (socket: Socket) => {
-  useSocketIO(io, socket);
+	useSocketIO(io, socket);
 });
 
 httpServer.listen(env.PORT, () => {
-  console.log(
-    chalk.blue(
-      `Live on ${env.NODE_ENV === "production" ? "https" : "http"}://${env.HOST}:${env.PORT}`,
-    ),
-  );
+	console.log(
+		chalk.blue(
+			`Live on ${env.NODE_ENV === "production" ? "https" : "http"}://${env.HOST}:${env.PORT}`,
+		),
+	);
 });
