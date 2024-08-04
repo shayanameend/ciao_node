@@ -2,6 +2,8 @@ import type { Request, Response } from "express";
 import type { JWTUserType } from "./validators/user.validator.js";
 
 export type Data =
+	| undefined
+	| null
 	| number
 	| string
 	| boolean

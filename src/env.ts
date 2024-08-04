@@ -22,7 +22,8 @@ export const envSchema = zod.object({
 		})
 		.url({
 			message: "Valid Database URL is Required",
-		}),
+		})
+		.default("file:../db/dev.db"),
 	JWT_SECRET: zod
 		.string({
 			message: "Valid JWT Secret is Required",
