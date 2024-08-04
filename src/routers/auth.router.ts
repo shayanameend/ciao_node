@@ -6,6 +6,6 @@ const authRouter: Router = Router();
 
 authRouter.post("/register", register);
 authRouter.post("/login", login);
-authRouter.post("/logout", authenticate, logout);
+authRouter.post("/logout", authenticate("user"), logout);
 
 export { authRouter };
