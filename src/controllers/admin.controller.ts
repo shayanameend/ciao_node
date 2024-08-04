@@ -10,6 +10,7 @@ export async function getAllUsers(
       select: {
         id: true,
         email: true,
+        role: true,
         createdAt: true,
         profile: true,
         devices: {

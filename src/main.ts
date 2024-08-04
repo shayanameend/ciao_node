@@ -43,7 +43,7 @@ app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(morgan("dev"));
-app.use(responseHandler({ debugLevel: 3 }));
+app.use(responseHandler({ debugLevel: 1 }));
 app.use(appRouter);
 
 console.log(chalk.blue("Setting Up Socket IO"));

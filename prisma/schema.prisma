@@ -11,8 +11,9 @@ model User {
   id         String   @id @default(uuid())
   email      String   @unique
   password   String
+  role       String   @default("user")
   isVerified Boolean  @default(false)
-  otp        OTP?
+  otp        Otp?
   profile    Profile?
   devices    Device[]
   createdAt  DateTime @default(now())
@@ -31,7 +32,7 @@ model Device {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model OTP {
+model Otp {
   id        String   @id @default(uuid())
   code      String
   type      String
