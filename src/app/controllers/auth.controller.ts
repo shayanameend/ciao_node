@@ -1,17 +1,17 @@
 import argon from "argon2";
 import jwt from "jsonwebtoken";
-import { db } from "../db.js";
-import { env } from "../env.js";
-import type { ExtendedRequest, ExtendedResponse } from "../types.js";
-import { sendEmail } from "../utils/mail.js";
-import { generateOTP } from "../utils/otp.js";
-import { getBodyForOTP } from "../utils/templates.js";
+import { db } from "../../db.js";
+import { env } from "../../env.js";
+import type { ExtendedRequest, ExtendedResponse } from "../../types.js";
+import { sendEmail } from "../../utils/mail.js";
+import { generateOTP } from "../../utils/otp.js";
+import { getBodyForOTP } from "../../utils/templates.js";
 import {
 	loginUserBodySchema,
 	registerUserBodySchema,
 	resendOTPBodySchema,
 	verifyOTPBodySchema,
-} from "../validators/user.validator.js";
+} from "../../validators/auth.validators.js";
 
 export async function register(req: ExtendedRequest, res: ExtendedResponse) {
 	try {

@@ -1,5 +1,32 @@
 import * as zod from "zod";
 
+export const jwtUserSchema = zod.object({
+	id: zod
+		.string({
+			message: "ID is required",
+		})
+		.min(1, {
+			message: "ID should be at least 1 character",
+		}),
+	email: zod
+		.string({
+			message: "Email is required",
+		})
+		.email({
+			message: "Invalid email",
+		}),
+	deviceToken: zod
+		.string({
+			message: "Device token is required",
+		})
+		.min(1, {
+			message: "Device should be at least 1 character",
+		}),
+	deviceType: zod.enum(["android", "ios"], {
+		message: "Only Android and iOS devices are supported",
+	}),
+});
+
 export const registerUserBodySchema = zod.object({
 	email: zod
 		.string({
@@ -33,17 +60,17 @@ export const registerUserBodySchema = zod.object({
 	}),
 });
 
-export const verifyOTPBodySchema = zod.object({
-	otpCode: zod.string({
-		message: "OTP is required",
-	}),
+export const resendOTPBodySchema = zod.object({
 	verificationType: zod.enum(["registeration", "forgotPassword"], {
 		message:
 			"Only registeration and forgotPassword verification types are supported",
 	}),
 });
 
-export const resendOTPBodySchema = zod.object({
+export const verifyOTPBodySchema = zod.object({
+	otpCode: zod.string({
+		message: "OTP is required",
+	}),
 	verificationType: zod.enum(["registeration", "forgotPassword"], {
 		message:
 			"Only registeration and forgotPassword verification types are supported",
@@ -80,35 +107,8 @@ export const loginUserBodySchema = zod.object({
 	}),
 });
 
-export const jwtUserSchema = zod.object({
-	id: zod
-		.string({
-			message: "ID is required",
-		})
-		.min(1, {
-			message: "ID should be at least 1 character",
-		}),
-	email: zod
-		.string({
-			message: "Email is required",
-		})
-		.email({
-			message: "Invalid email",
-		}),
-	deviceToken: zod
-		.string({
-			message: "Device token is required",
-		})
-		.min(1, {
-			message: "Device should be at least 1 character",
-		}),
-	deviceType: zod.enum(["android", "ios"], {
-		message: "Only Android and iOS devices are supported",
-	}),
-});
-
-export type RegisterUserBodyType = zod.infer<typeof registerUserBodySchema>;
-export type VerifyOTPBodyType = zod.infer<typeof verifyOTPBodySchema>;
-export type ResendOTPBodyType = zod.infer<typeof resendOTPBodySchema>;
-export type LoginUserBodyType = zod.infer<typeof loginUserBodySchema>;
 export type JWTUserType = zod.infer<typeof jwtUserSchema>;
+export type RegisterUserBodyType = zod.infer<typeof registerUserBodySchema>;
+export type ResendOTPBodyType = zod.infer<typeof resendOTPBodySchema>;
+export type VerifyOTPBodyType = zod.infer<typeof verifyOTPBodySchema>;
+export type LoginUserBodyType = zod.infer<typeof loginUserBodySchema>;

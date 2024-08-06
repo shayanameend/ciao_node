@@ -2,7 +2,7 @@ import type { NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { env } from "../env.js";
 import type { ExtendedRequest, ExtendedResponse } from "../types.js";
-import { jwtUserSchema } from "../validators/user.validator.js";
+import { jwtUserSchema } from "../validators/auth.validators.js";
 
 export function authenticate(role: "user" | "admin" = "user") {
 	return async (

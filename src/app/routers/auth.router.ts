@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { authenticate } from "../../middlewares/authenticate.js";
 import {
 	login,
 	logout,
@@ -6,14 +7,13 @@ import {
 	resendOTP,
 	verifyOTP,
 } from "../controllers/auth.controller.js";
-import { authenticate } from "../middlewares/authenticate.js";
 
 const authRouter: Router = Router();
 
 authRouter.post("/register", register);
-authRouter.post("/verify", authenticate("user"), verifyOTP);
-authRouter.post("/resend", authenticate("user"), resendOTP);
+authRouter.post("/verify", authenticate("admin"), verifyOTP);
+authRouter.post("/resend", authenticate("admin"), resendOTP);
 authRouter.post("/login", login);
-authRouter.post("/logout", authenticate("user"), logout);
+authRouter.post("/logout", authenticate("admin"), logout);
 
 export { authRouter };

@@ -1,5 +1,5 @@
-import { db } from "../db.js";
-import type { ExtendedRequest, ExtendedResponse } from "../types.js";
+import { db } from "../../db.js";
+import type { ExtendedRequest, ExtendedResponse } from "../../types.js";
 
 export async function getAllUsers(
 	_req: ExtendedRequest,
