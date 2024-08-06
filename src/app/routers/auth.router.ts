@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { authenticate } from "../../middlewares/authenticate.js";
 import {
+	createProfile,
 	login,
 	logout,
 	register,
@@ -11,9 +12,10 @@ import {
 const authRouter: Router = Router();
 
 authRouter.post("/register", register);
-authRouter.post("/verify", authenticate("admin"), verifyOTP);
-authRouter.post("/resend", authenticate("admin"), resendOTP);
+authRouter.post("/resend", authenticate("user"), resendOTP);
+authRouter.post("/verify", authenticate("user"), verifyOTP);
+authRouter.post("/create-profile", authenticate("user"), createProfile);
 authRouter.post("/login", login);
-authRouter.post("/logout", authenticate("admin"), logout);
+authRouter.post("/logout", authenticate("user"), logout);
 
 export { authRouter };

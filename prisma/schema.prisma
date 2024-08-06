@@ -48,6 +48,7 @@ model Profile {
   id        String    @id @default(uuid())
   userId    String    @unique
   fullName  String
+  dob       DateTime
   isOnline  Boolean   @default(false)
   messages  Message[]
   rooms     Room[]

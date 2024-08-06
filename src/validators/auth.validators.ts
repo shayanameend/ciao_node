@@ -77,6 +77,25 @@ export const verifyOTPBodySchema = zod.object({
 	}),
 });
 
+export const forgetPasswordBodySchema = zod.object({
+	email: zod
+		.string({
+			message: "Email is required",
+		})
+		.email({
+			message: "Invalid email",
+		}),
+});
+
+export const createProfileBodySchema = zod.object({
+	fullName: zod.string({
+		message: "Full name is required",
+	}),
+	dob: zod.string({
+		message: "Date of birth is required",
+	}),
+});
+
 export const loginUserBodySchema = zod.object({
 	email: zod
 		.string({
