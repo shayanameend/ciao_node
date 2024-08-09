@@ -2,7 +2,11 @@ import argon from "argon2";
 import jwt from "jsonwebtoken";
 import { db } from "../../db.js";
 import { env } from "../../env.js";
-import type { ExtendedRequest, ExtendedResponse } from "../../types.js";
+import {
+	type ExtendedRequest,
+	type ExtendedResponse,
+	OtpType,
+} from "../../types.js";
 import { sendEmail } from "../../utils/mail.js";
 import { generateOTP } from "../../utils/otp.js";
 import { getBodyForOTP } from "../../utils/templates.js";
@@ -73,7 +77,7 @@ export async function register(req: ExtendedRequest, res: ExtendedResponse) {
 		const otp = await db.otp.create({
 			data: {
 				code: otpCode,
-				type: "registeration",
+				type: OtpType.REGISTERATION,
 				user: {
 					connect: {
 						id: user.id,
@@ -137,7 +141,7 @@ export async function resendOTP(req: ExtendedRequest, res: ExtendedResponse) {
 
 		const { verificationType } = parsedBody.data;
 
-		if (verificationType === "registeration") {
+		if (verificationType === OtpType.REGISTERATION) {
 			const userAlreadyVerified = await db.user.findUnique({
 				where: {
 					id: req.user.id,
@@ -228,7 +232,7 @@ export async function requestForgetPassword(
 	const otp = await db.otp.create({
 		data: {
 			code: otpCode,
-			type: "forget-password",
+			type: OtpType.FORGET_PASSWORD,
 			user: {
 				connect: {
 					id: user.id,
@@ -264,7 +268,7 @@ export async function verifyOTP(req: ExtendedRequest, res: ExtendedResponse) {
 
 		const { otpCode, verificationType } = parsedBody.data;
 
-		if (verificationType === "registeration") {
+		if (verificationType === OtpType.REGISTERATION) {
 			const userAlreadyVerified = await db.user.findUnique({
 				where: {
 					id: req.user.id,

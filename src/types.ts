@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import type { JWTUserType } from "./validators/user.validator.js";
+import type { JWTUserType } from "./validators/auth.validators.js";
 
 export type Data =
 	| null
@@ -9,6 +9,11 @@ export type Data =
 	| Date
 	| Data[]
 	| { [key: string]: Data };
+
+export enum OtpType {
+	REGISTERATION = "registeration",
+	FORGET_PASSWORD = "forget-password",
+}
 
 export interface ExtendedRequest extends Request {
 	user?: JWTUserType;

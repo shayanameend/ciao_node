@@ -1,4 +1,5 @@
 import * as zod from "zod";
+import { OtpType } from "../types.js";
 
 export const jwtUserSchema = zod.object({
 	id: zod
@@ -61,7 +62,7 @@ export const registerUserBodySchema = zod.object({
 });
 
 export const resendOTPBodySchema = zod.object({
-	verificationType: zod.enum(["registeration", "forgotPassword"], {
+	verificationType: zod.enum([OtpType.REGISTERATION, OtpType.FORGET_PASSWORD], {
 		message:
 			"Only registeration and forgotPassword verification types are supported",
 	}),
@@ -71,7 +72,7 @@ export const verifyOTPBodySchema = zod.object({
 	otpCode: zod.string({
 		message: "OTP is required",
 	}),
-	verificationType: zod.enum(["registeration", "forgotPassword"], {
+	verificationType: zod.enum([OtpType.REGISTERATION, OtpType.FORGET_PASSWORD], {
 		message:
 			"Only registeration and forgotPassword verification types are supported",
 	}),

@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import type { NextFunction } from "express";
-import type { ExtendedRequest, ExtendedResponse } from "../types.js";
+import type { Data, ExtendedRequest, ExtendedResponse } from "../types.js";
 
 export function responseHandler({ debugLevel }: { debugLevel: 0 | 1 | 2 | 3 }) {
 	return async (
@@ -9,9 +9,13 @@ export function responseHandler({ debugLevel }: { debugLevel: 0 | 1 | 2 | 3 }) {
 		next: NextFunction,
 	) => {
 		res.success = ({ data = {}, message = "Success!" }) => {
-			debugLevel > 2 && console.log(chalk.green(JSON.stringify(req.body)));
-			debugLevel > 0 && console.log(chalk.green(message));
-			debugLevel > 1 && console.log(chalk.green(JSON.stringify(data)));
+			debugHnadler({
+				debugLevel,
+				color: "green",
+				body: req.body,
+				message,
+				data,
+			});
 
 			res.status(200).json({
 				data,
@@ -20,9 +24,13 @@ export function responseHandler({ debugLevel }: { debugLevel: 0 | 1 | 2 | 3 }) {
 		};
 
 		res.created = ({ data = {}, message = "Created!" }) => {
-			debugLevel > 2 && console.log(chalk.green(JSON.stringify(req.body)));
-			debugLevel > 0 && console.log(chalk.green(message));
-			debugLevel > 1 && console.log(chalk.green(JSON.stringify(data)));
+			debugHnadler({
+				debugLevel,
+				color: "green",
+				body: req.body,
+				message,
+				data,
+			});
 
 			res.status(201).json({
 				data,
@@ -31,9 +39,13 @@ export function responseHandler({ debugLevel }: { debugLevel: 0 | 1 | 2 | 3 }) {
 		};
 
 		res.noContent = ({ data = {}, message = "No Content!" }) => {
-			debugLevel > 2 && console.log(chalk.green(JSON.stringify(req.body)));
-			debugLevel > 0 && console.log(chalk.green(message));
-			debugLevel > 1 && console.log(chalk.green(JSON.stringify(data)));
+			debugHnadler({
+				debugLevel,
+				color: "green",
+				body: req.body,
+				message,
+				data,
+			});
 
 			res.status(204).json({
 				data,
@@ -42,9 +54,13 @@ export function responseHandler({ debugLevel }: { debugLevel: 0 | 1 | 2 | 3 }) {
 		};
 
 		res.badRequest = ({ data = {}, message = "Bad Request!" }) => {
-			debugLevel > 2 && console.log(chalk.red(JSON.stringify(req.body)));
-			debugLevel > 0 && console.log(chalk.red(message));
-			debugLevel > 1 && console.log(chalk.red(JSON.stringify(data)));
+			debugHnadler({
+				debugLevel,
+				color: "red",
+				body: req.body,
+				message,
+				data,
+			});
 
 			res.status(400).json({
 				data,
@@ -53,9 +69,13 @@ export function responseHandler({ debugLevel }: { debugLevel: 0 | 1 | 2 | 3 }) {
 		};
 
 		res.unauthorized = ({ data = {}, message = "Unauthorized!" }) => {
-			debugLevel > 2 && console.log(chalk.red(JSON.stringify(req.body)));
-			debugLevel > 0 && console.log(chalk.red(message));
-			debugLevel > 1 && console.log(chalk.red(JSON.stringify(data)));
+			debugHnadler({
+				debugLevel,
+				color: "red",
+				body: req.body,
+				message,
+				data,
+			});
 
 			res.status(401).json({
 				data,
@@ -64,9 +84,13 @@ export function responseHandler({ debugLevel }: { debugLevel: 0 | 1 | 2 | 3 }) {
 		};
 
 		res.notFound = ({ data = {}, message = "Not Found!" }) => {
-			debugLevel > 2 && console.log(chalk.red(JSON.stringify(req.body)));
-			debugLevel > 0 && console.log(chalk.red(message));
-			debugLevel > 1 && console.log(chalk.red(JSON.stringify(data)));
+			debugHnadler({
+				debugLevel,
+				color: "red",
+				body: req.body,
+				message,
+				data,
+			});
 
 			res.status(404).json({
 				data,
@@ -78,9 +102,13 @@ export function responseHandler({ debugLevel }: { debugLevel: 0 | 1 | 2 | 3 }) {
 			data = {},
 			message = "Internal Server Error!",
 		}) => {
-			debugLevel > 2 && console.log(chalk.red(JSON.stringify(req.body)));
-			debugLevel > 0 && console.log(chalk.red(message));
-			debugLevel > 1 && console.log(chalk.red(JSON.stringify(data)));
+			debugHnadler({
+				debugLevel,
+				color: "red",
+				body: req.body,
+				message,
+				data,
+			});
 
 			res.status(500).json({
 				data,
@@ -90,4 +118,22 @@ export function responseHandler({ debugLevel }: { debugLevel: 0 | 1 | 2 | 3 }) {
 
 		next();
 	};
+}
+
+function debugHnadler({
+	debugLevel,
+	color,
+	body,
+	message,
+	data,
+}: {
+	debugLevel: 0 | 1 | 2 | 3;
+	color: "green" | "red";
+	body: ExtendedRequest["body"];
+	message: string;
+	data: Data;
+}) {
+	debugLevel > 2 && console.log(chalk[color](JSON.stringify(body)));
+	debugLevel > 0 && console.log(chalk[color](message));
+	debugLevel > 1 && console.log(chalk[color](JSON.stringify(data)));
 }
