@@ -523,6 +523,9 @@ export async function login(req: ExtendedRequest, res: ExtendedResponse) {
 			where: {
 				email,
 			},
+			include: {
+				profile: true,
+			},
 		});
 
 		if (!user) {
@@ -533,6 +536,14 @@ export async function login(req: ExtendedRequest, res: ExtendedResponse) {
 
 		if (!isPasswordValid) {
 			return res.unauthorized?.({ message: "Invalid password" });
+		}
+
+		if (!user.isVerified) {
+			return res.unauthorized?.({ message: "User not verified" });
+		}
+
+		if (!user.profile) {
+			return res.unauthorized?.({ message: "Profile not found" });
 		}
 
 		const device = await db.device.upsert({
