@@ -11,6 +11,7 @@ import { sendEmail } from "../../utils/mail.js";
 import { generateOTP } from "../../utils/otp.js";
 import { getBodyForOTP } from "../../utils/templates.js";
 import {
+	changePasswordBodySchema,
 	createProfileBodySchema,
 	forgetPasswordBodySchema,
 	loginUserBodySchema,
@@ -77,7 +78,7 @@ export async function register(req: ExtendedRequest, res: ExtendedResponse) {
 		const otp = await db.otp.create({
 			data: {
 				code: otpCode,
-				type: OtpType.REGISTERATION,
+				type: OtpType.REGISTRATION,
 				user: {
 					connect: {
 						id: user.id,
@@ -141,7 +142,7 @@ export async function resendOTP(req: ExtendedRequest, res: ExtendedResponse) {
 
 		const { verificationType } = parsedBody.data;
 
-		if (verificationType === OtpType.REGISTERATION) {
+		if (verificationType === OtpType.REGISTRATION) {
 			const userAlreadyVerified = await db.user.findUnique({
 				where: {
 					id: req.user.id,
@@ -252,6 +253,75 @@ export async function requestForgetPassword(
 	});
 }
 
+export async function changePassword(
+	req: ExtendedRequest,
+	res: ExtendedResponse,
+) {
+	try {
+		if (!req.user) {
+			return res.unauthorized?.({
+				message: "Unauthorized",
+			});
+		}
+
+		const parsedBody = changePasswordBodySchema.safeParse(req.body);
+
+		if (!parsedBody.success) {
+			return res.badRequest?.({ message: parsedBody.error.errors[0].message });
+		}
+
+		const { oldPassword, newPassword } = parsedBody.data;
+
+		const user = await db.user.findUnique({
+			where: {
+				id: req.user.id,
+			},
+			include: {
+				profile: true,
+			},
+		});
+
+		if (!user?.isVerified) {
+			return res.unauthorized?.({
+				message: "User not verified",
+			});
+		}
+
+		if (!user?.profile) {
+			return res.badRequest?.({ message: "Profile does not exist" });
+		}
+
+		const isPasswordValid = await argon.verify(user.password, oldPassword);
+
+		if (!isPasswordValid) {
+			return res.unauthorized?.({ message: "Invalid old password" });
+		}
+
+		const hashedPassword = await argon.hash(newPassword);
+
+		await db.user.update({
+			where: {
+				id: user.id,
+			},
+			data: {
+				password: hashedPassword,
+			},
+		});
+
+		return res.created?.({
+			message: "Password changed successfully",
+		});
+	} catch (error) {
+		console.error(error);
+
+		if (error instanceof Error) {
+			return res.internalServerError?.({ message: error.message });
+		}
+
+		return res.internalServerError?.({ message: "Something went wrong" });
+	}
+}
+
 export async function verifyOTP(req: ExtendedRequest, res: ExtendedResponse) {
 	try {
 		if (!req.user) {
@@ -268,7 +338,7 @@ export async function verifyOTP(req: ExtendedRequest, res: ExtendedResponse) {
 
 		const { otpCode, verificationType } = parsedBody.data;
 
-		if (verificationType === OtpType.REGISTERATION) {
+		if (verificationType === OtpType.REGISTRATION) {
 			const userAlreadyVerified = await db.user.findUnique({
 				where: {
 					id: req.user.id,

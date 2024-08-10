@@ -11,7 +11,7 @@ export type Data =
 	| { [key: string]: Data };
 
 export enum OtpType {
-	REGISTERATION = "registeration",
+	REGISTRATION = "registration",
 	FORGET_PASSWORD = "forget-password",
 }
 

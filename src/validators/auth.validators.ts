@@ -62,7 +62,7 @@ export const registerUserBodySchema = zod.object({
 });
 
 export const resendOTPBodySchema = zod.object({
-	verificationType: zod.enum([OtpType.REGISTERATION, OtpType.FORGET_PASSWORD], {
+	verificationType: zod.enum([OtpType.REGISTRATION, OtpType.FORGET_PASSWORD], {
 		message:
 			"Only registeration and forgotPassword verification types are supported",
 	}),
@@ -72,7 +72,7 @@ export const verifyOTPBodySchema = zod.object({
 	otpCode: zod.string({
 		message: "OTP is required",
 	}),
-	verificationType: zod.enum([OtpType.REGISTERATION, OtpType.FORGET_PASSWORD], {
+	verificationType: zod.enum([OtpType.REGISTRATION, OtpType.FORGET_PASSWORD], {
 		message:
 			"Only registeration and forgotPassword verification types are supported",
 	}),
@@ -125,6 +125,29 @@ export const loginUserBodySchema = zod.object({
 	deviceType: zod.enum(["android", "ios"], {
 		message: "Only Android and iOS devices are supported",
 	}),
+});
+
+export const changePasswordBodySchema = zod.object({
+	oldPassword: zod
+		.string({
+			message: "Old Password is required",
+		})
+		.min(8, {
+			message: "Old Password should be at least 8 characters",
+		})
+		.max(16, {
+			message: "Old Password should be at most 16 characters",
+		}),
+	newPassword: zod
+		.string({
+			message: "New Password is required",
+		})
+		.min(8, {
+			message: "New Password should be at least 8 characters",
+		})
+		.max(16, {
+			message: "New Password should be at most 16 characters",
+		}),
 });
 
 export type JWTUserType = zod.infer<typeof jwtUserSchema>;
