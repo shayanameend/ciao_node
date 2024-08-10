@@ -111,8 +111,6 @@ export async function register(req: ExtendedRequest, res: ExtendedResponse) {
 				user: {
 					id: user.id,
 					email: user.email,
-					deviceToken: device.token,
-					deviceType: device.os,
 				},
 				token: jwtToken,
 			},
@@ -131,7 +129,7 @@ export async function register(req: ExtendedRequest, res: ExtendedResponse) {
 
 export async function resendOTP(req: ExtendedRequest, res: ExtendedResponse) {
 	try {
-		if (!req.user) {
+		if (!req.user || req.user.tokenType !== TokenType.VERIFICATION) {
 			return res.unauthorized?.({
 				message: "Unauthorized",
 			});
@@ -203,7 +201,7 @@ export async function resendOTP(req: ExtendedRequest, res: ExtendedResponse) {
 
 export async function verifyOTP(req: ExtendedRequest, res: ExtendedResponse) {
 	try {
-		if (!req.user) {
+		if (!req.user || req.user.tokenType !== TokenType.VERIFICATION) {
 			return res.unauthorized?.({
 				message: "Unauthorized",
 			});
@@ -300,7 +298,7 @@ export async function requestForgetPassword(
 		return res.badRequest?.({ message: parsedBody.error.errors[0].message });
 	}
 
-	const { email } = parsedBody.data;
+	const { email, deviceToken, deviceType } = parsedBody.data;
 
 	const user = await db.user.findUnique({
 		where: {
@@ -314,11 +312,37 @@ export async function requestForgetPassword(
 		});
 	}
 
+	const device = await db.device.upsert({
+		where: {
+			token: deviceToken,
+		},
+		create: {
+			token: deviceToken,
+			os: deviceType,
+			isActive: false,
+			user: {
+				connect: {
+					id: user.id,
+				},
+			},
+		},
+		update: {
+			isActive: false,
+			user: {
+				connect: {
+					id: user.id,
+				},
+			},
+		},
+	});
+
 	const jwtToken = jwt.sign(
 		{
 			id: user.id,
 			email: user.email,
 			tokenType: TokenType.FORGET_PASSWORD,
+			deviceToken: device.token,
+			deviceType: device.os,
 		},
 		env.JWT_SECRET,
 	);
@@ -340,7 +364,7 @@ export async function resetPassword(
 	res: ExtendedResponse,
 ) {
 	try {
-		if (!req.user) {
+		if (!req.user || req.user.tokenType !== TokenType.FORGET_PASSWORD) {
 			return res.unauthorized?.({
 				message: "Unauthorized",
 			});
@@ -377,7 +401,25 @@ export async function resetPassword(
 			},
 		});
 
-		return res.created?.({
+		const jwtToken = jwt.sign(
+			{
+				id: user.id,
+				email: user.email,
+				tokenType: TokenType.VERIFICATION,
+				deviceToken: req.user.deviceToken,
+				deviceType: req.user.deviceType,
+			},
+			env.JWT_SECRET,
+		);
+
+		return res.success?.({
+			data: {
+				user: {
+					id: user.id,
+					email: user.email,
+				},
+				token: jwtToken,
+			},
 			message: "Password reseted successfully",
 		});
 	} catch (error) {
@@ -396,7 +438,7 @@ export async function createProfile(
 	res: ExtendedResponse,
 ) {
 	try {
-		if (!req.user) {
+		if (!req.user || req.user.tokenType !== TokenType.VERIFICATION) {
 			return res.unauthorized?.({
 				message: "Unauthorized",
 			});
@@ -520,6 +562,7 @@ export async function login(req: ExtendedRequest, res: ExtendedResponse) {
 			{
 				id: user.id,
 				email: user.email,
+				tokenType: TokenType.VERIFICATION,
 				deviceToken: device.token,
 				deviceType: device.os,
 			},
@@ -531,8 +574,6 @@ export async function login(req: ExtendedRequest, res: ExtendedResponse) {
 				user: {
 					id: user.id,
 					email: user.email,
-					deviceToken: device.token,
-					deviceType: device.os,
 				},
 				token: jwtToken,
 			},
@@ -551,7 +592,7 @@ export async function login(req: ExtendedRequest, res: ExtendedResponse) {
 
 export async function logout(req: ExtendedRequest, res: ExtendedResponse) {
 	try {
-		if (!req.user) {
+		if (!req.user || req.user.tokenType !== TokenType.VERIFICATION) {
 			return res.unauthorized?.({
 				message: "Unauthorized",
 			});
@@ -597,7 +638,7 @@ export async function changePassword(
 	res: ExtendedResponse,
 ) {
 	try {
-		if (!req.user) {
+		if (!req.user || req.user.tokenType !== TokenType.VERIFICATION) {
 			return res.unauthorized?.({
 				message: "Unauthorized",
 			});

@@ -19,19 +19,12 @@ export const jwtUserSchema = zod.object({
 	tokenType: zod.enum([TokenType.VERIFICATION, TokenType.FORGET_PASSWORD], {
 		message: "Only Verification and Forget Password tokens are supported",
 	}),
-	deviceToken: zod
-		.string({
-			message: "Device token is required",
-		})
-		.min(1, {
-			message: "Device should be at least 1 character",
-		})
-		.optional(),
-	deviceType: zod
-		.enum([OsType.ANDROID, OsType.IOS], {
-			message: "Only Android and iOS devices are supported",
-		})
-		.optional(),
+	deviceToken: zod.string({
+		message: "Device token is required",
+	}),
+	deviceType: zod.enum([OsType.ANDROID, OsType.IOS], {
+		message: "Only Android and iOS devices are supported",
+	}),
 });
 
 export const registerUserBodySchema = zod.object({
@@ -92,6 +85,12 @@ export const forgetPasswordBodySchema = zod.object({
 		.email({
 			message: "Invalid email",
 		}),
+	deviceToken: zod.string({
+		message: "Device token is required",
+	}),
+	deviceType: zod.enum([OsType.ANDROID, OsType.IOS], {
+		message: "Only Android and iOS devices are supported",
+	}),
 });
 
 export const resetPasswordBodySchema = zod.object({
