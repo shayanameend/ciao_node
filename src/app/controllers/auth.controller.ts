@@ -294,12 +294,6 @@ export async function requestForgetPassword(
 	req: ExtendedRequest,
 	res: ExtendedResponse,
 ) {
-	if (!req.user) {
-		return res.unauthorized?.({
-			message: "Unauthorized",
-		});
-	}
-
 	const parsedBody = forgetPasswordBodySchema.safeParse(req.body);
 
 	if (!parsedBody.success) {
