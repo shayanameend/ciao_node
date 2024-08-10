@@ -9,7 +9,7 @@ export function responseHandler({ debugLevel }: { debugLevel: 0 | 1 | 2 | 3 }) {
 		next: NextFunction,
 	) => {
 		res.success = ({ data = {}, message = "Success!" }) => {
-			debugHnadler({
+			debugHandler({
 				debugLevel,
 				color: "green",
 				body: req.body,
@@ -24,7 +24,7 @@ export function responseHandler({ debugLevel }: { debugLevel: 0 | 1 | 2 | 3 }) {
 		};
 
 		res.created = ({ data = {}, message = "Created!" }) => {
-			debugHnadler({
+			debugHandler({
 				debugLevel,
 				color: "green",
 				body: req.body,
@@ -39,7 +39,7 @@ export function responseHandler({ debugLevel }: { debugLevel: 0 | 1 | 2 | 3 }) {
 		};
 
 		res.noContent = ({ data = {}, message = "No Content!" }) => {
-			debugHnadler({
+			debugHandler({
 				debugLevel,
 				color: "green",
 				body: req.body,
@@ -54,7 +54,7 @@ export function responseHandler({ debugLevel }: { debugLevel: 0 | 1 | 2 | 3 }) {
 		};
 
 		res.badRequest = ({ data = {}, message = "Bad Request!" }) => {
-			debugHnadler({
+			debugHandler({
 				debugLevel,
 				color: "red",
 				body: req.body,
@@ -69,7 +69,7 @@ export function responseHandler({ debugLevel }: { debugLevel: 0 | 1 | 2 | 3 }) {
 		};
 
 		res.unauthorized = ({ data = {}, message = "Unauthorized!" }) => {
-			debugHnadler({
+			debugHandler({
 				debugLevel,
 				color: "red",
 				body: req.body,
@@ -84,7 +84,7 @@ export function responseHandler({ debugLevel }: { debugLevel: 0 | 1 | 2 | 3 }) {
 		};
 
 		res.notFound = ({ data = {}, message = "Not Found!" }) => {
-			debugHnadler({
+			debugHandler({
 				debugLevel,
 				color: "red",
 				body: req.body,
@@ -102,7 +102,7 @@ export function responseHandler({ debugLevel }: { debugLevel: 0 | 1 | 2 | 3 }) {
 			data = {},
 			message = "Internal Server Error!",
 		}) => {
-			debugHnadler({
+			debugHandler({
 				debugLevel,
 				color: "red",
 				body: req.body,
@@ -120,7 +120,7 @@ export function responseHandler({ debugLevel }: { debugLevel: 0 | 1 | 2 | 3 }) {
 	};
 }
 
-function debugHnadler({
+function debugHandler({
 	debugLevel,
 	color,
 	body,
