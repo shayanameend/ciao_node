@@ -1,15 +1,15 @@
 import { Router } from "express";
 import { authenticateHttp } from "../../middlewares/authenticate.js";
 import {
-  changePassword,
-  createProfile,
-  login,
-  logout,
-  register,
-  requestForgetPassword,
-  resendOTP,
-  resetPassword,
-  verifyOTP,
+	changePassword,
+	createProfile,
+	login,
+	logout,
+	register,
+	requestForgetPassword,
+	resendOTP,
+	resetPassword,
+	verifyOTP,
 } from "../controllers/auth.controller.js";
 
 const authRouter: Router = Router();
