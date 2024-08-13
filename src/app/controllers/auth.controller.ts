@@ -10,7 +10,7 @@ import {
 } from "../../types.js";
 import { sendEmail } from "../../utils/mail.js";
 import { generateOTP } from "../../utils/otp.js";
-import { getBodyForOTP } from "../../utils/templates.js";
+import { generateBodyForOTP } from "../../utils/templates.js";
 import {
 	changePasswordBodySchema,
 	createProfileBodySchema,
@@ -92,7 +92,7 @@ export async function register(req: ExtendedRequest, res: ExtendedResponse) {
 		await sendEmail({
 			name: "",
 			email: user.email,
-			body: getBodyForOTP(otp.code),
+			body: generateBodyForOTP(otp.code),
 		});
 
 		const jwtToken = jwt.sign(
@@ -182,7 +182,7 @@ export async function resendOTP(req: ExtendedRequest, res: ExtendedResponse) {
 		await sendEmail({
 			name: "",
 			email: req.user.email,
-			body: getBodyForOTP(otp.code),
+			body: generateBodyForOTP(otp.code),
 		});
 
 		return res.success?.({
