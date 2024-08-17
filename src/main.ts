@@ -4,7 +4,6 @@ import { createServer as createProductionServer } from "node:https";
 import chalk from "chalk";
 import cors from "cors";
 import express, { type Express } from "express";
-import jwt from "jsonwebtoken";
 import morgan from "morgan";
 import type { Socket } from "socket.io";
 import { Server as SocketServer } from "socket.io";
@@ -13,17 +12,12 @@ import { env } from "./env.js";
 import { authenticateSocket } from "./middlewares/authenticate.js";
 import { responseHandler } from "./middlewares/response_handler.js";
 import { useSocketIO } from "./socket.js";
-import { jwtUserSchema } from "./validators/auth.validators.js";
 
 const app: Express = express();
 
 let httpServer: HttpServer;
 
 switch (env.NODE_ENV) {
-	case "development":
-		console.log(chalk.yellow("Setting Up Development Http Server"));
-		httpServer = createDevelopmentServer(app);
-		break;
 	case "production":
 		console.log(chalk.blue("Setting Up Production Https Server"));
 		httpServer = createProductionServer(
@@ -33,6 +27,10 @@ switch (env.NODE_ENV) {
 			},
 			app,
 		);
+		break;
+	default:
+		console.log(chalk.yellow("Setting Up Development Http Server"));
+		httpServer = createDevelopmentServer(app);
 		break;
 }
 
