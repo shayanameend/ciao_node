@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { default as routes } from "../../config/routes.js";
+import { default as routes } from "../../routes.js";
 import { authenticateHttp } from "../../middlewares/authenticate.js";
 import {
 	changePassword,

@@ -1,6 +1,6 @@
 import { default as chalk } from "chalk";
 import type { Socket, Server as SocketServer } from "socket.io";
-import { default as events } from "./config/events.js";
+import { default as events } from "./events.js";
 import { jwtUserSchema } from "./validators/auth.validators.js";
 
 export function useSocketIO(io: SocketServer, socket: Socket) {

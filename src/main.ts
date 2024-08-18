@@ -8,7 +8,7 @@ import { default as morgan } from "morgan";
 import type { Socket } from "socket.io";
 import { Server as SocketServer } from "socket.io";
 import { appRouter } from "./app.js";
-import { default as events } from "./config/events.js";
+import { default as events } from "./events.js";
 import { env } from "./env.js";
 import { authenticateSocket } from "./middlewares/authenticate.js";
 import { responseHandler } from "./middlewares/response_handler.js";
