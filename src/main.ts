@@ -8,12 +8,12 @@ import morgan from "morgan";
 import type { Socket } from "socket.io";
 import { Server as SocketServer } from "socket.io";
 import { appRouter } from "./app.js";
+import { default as events } from "./config/events.js";
 import { env } from "./env.js";
 import { authenticateSocket } from "./middlewares/authenticate.js";
 import { responseHandler } from "./middlewares/response_handler.js";
 import { useSocketIO } from "./socket.js";
 import { NodeEnv } from "./types.js";
-import { default as events } from "./config/events.js";
 
 const app: Express = express();
 

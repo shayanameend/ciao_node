@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import type { Socket, Server as SocketServer } from "socket.io";
-import { jwtUserSchema } from "./validators/auth.validators.js";
 import { default as events } from "./config/events.js";
+import { jwtUserSchema } from "./validators/auth.validators.js";
 
 export function useSocketIO(io: SocketServer, socket: Socket) {
 	console.log(chalk.cyan(`User Connected: ${socket.id}`));

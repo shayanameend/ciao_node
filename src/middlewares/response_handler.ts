@@ -1,4 +1,4 @@
-import { default as chalk, type ColorName } from "chalk";
+import { type ColorName, default as chalk } from "chalk";
 import type { NextFunction } from "express";
 import type { Data, ExtendedRequest, ExtendedResponse } from "../types.js";
 
