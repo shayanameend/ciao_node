@@ -1,5 +1,5 @@
-import argon from "argon2";
-import jwt from "jsonwebtoken";
+import { default as argon } from "argon2";
+import { default as jwt } from "jsonwebtoken";
 import { db } from "../../db.js";
 import { env } from "../../env.js";
 import {

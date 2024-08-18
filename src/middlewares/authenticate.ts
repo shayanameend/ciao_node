@@ -1,5 +1,5 @@
 import type { NextFunction } from "express";
-import jwt from "jsonwebtoken";
+import { default as jwt } from "jsonwebtoken";
 import type { Socket } from "socket.io";
 import { env } from "../env.js";
 import type { ExtendedRequest, ExtendedResponse } from "../types.js";

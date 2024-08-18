@@ -1,10 +1,10 @@
 import type { Server as HttpServer } from "node:http";
 import { createServer as createDevelopmentServer } from "node:http";
 import { createServer as createProductionServer } from "node:https";
-import chalk from "chalk";
-import cors from "cors";
-import express, { type Express } from "express";
-import morgan from "morgan";
+import { default as chalk } from "chalk";
+import { default as cors } from "cors";
+import { type Express, default as express } from "express";
+import { default as morgan } from "morgan";
 import type { Socket } from "socket.io";
 import { Server as SocketServer } from "socket.io";
 import { appRouter } from "./app.js";
