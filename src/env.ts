@@ -30,11 +30,9 @@ export const envSchema = zod.object({
 			message: "Valid JWT Secret is Required",
 		})
 		.default("secret"),
-	COURIER_AUTH_TOKEN: zod
-		.string({
-			message: "Valid Courier Client Token is Required",
-		})
-		.optional(),
+	COURIER_AUTH_TOKEN: zod.string({
+		message: "Valid Courier Client Token is Required",
+	}),
 	SSL_CERT: zod
 		.string({
 			message: "Valid SSL Certificate",
