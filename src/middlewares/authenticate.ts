@@ -18,13 +18,13 @@ export function authenticateHttp(role: "user" | "admin" = "user") {
 			});
 		}
 
-		const token = authorization.split(" ")[1];
-		if (!token) {
+		const parsedToken = authorization.split(" ")[1];
+		if (!parsedToken) {
 			return res.unauthorized?.({ message: "Token is required" });
 		}
 
 		try {
-			const decodedToken = jwt.verify(token, env.JWT_SECRET);
+			const decodedToken = jwt.verify(parsedToken, env.JWT_SECRET);
 
 			const decodedJWTUser = jwtUserSchema.safeParse(decodedToken);
 
@@ -45,18 +45,18 @@ export async function authenticateSocket(
 	socket: Socket,
 	next: (err?: Error) => void,
 ) {
-	const authorization = socket.handshake.auth.authorization;
-	if (!authorization) {
-		return next(new Error("Authorization header is required"));
-	}
-
-	const token = authorization.split(" ")[1];
+	const token = socket.handshake.auth.token;
 	if (!token) {
 		return next(new Error("Token is required"));
 	}
 
+	const parsedToken = token.split(" ")[1];
+	if (!parsedToken) {
+		return next(new Error("Invalid token"));
+	}
+
 	try {
-		const decodedToken = jwt.verify(token, env.JWT_SECRET);
+		const decodedToken = jwt.verify(parsedToken, env.JWT_SECRET);
 
 		const decodedJWTUser = jwtUserSchema.safeParse(decodedToken);
 
