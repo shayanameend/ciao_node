@@ -1,11 +1,12 @@
 import * as zod from "zod";
+import { NodeEnv } from "./types.js";
 
 export const envSchema = zod.object({
 	NODE_ENV: zod
-		.enum(["development", "production"], {
+		.enum([NodeEnv.DEVELOPMENT, NodeEnv.PRODUCTION], {
 			message: "Valid NODE_ENV is Required",
 		})
-		.default("development"),
+		.default(NodeEnv.DEVELOPMENT),
 	HOST: zod
 		.string({
 			message: "Valid Host is Required",

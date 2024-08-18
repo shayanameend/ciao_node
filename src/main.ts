@@ -12,13 +12,15 @@ import { env } from "./env.js";
 import { authenticateSocket } from "./middlewares/authenticate.js";
 import { responseHandler } from "./middlewares/response_handler.js";
 import { useSocketIO } from "./socket.js";
+import { NodeEnv } from "./types.js";
+import { default as events } from "./config/events.js";
 
 const app: Express = express();
 
 let httpServer: HttpServer;
 
 switch (env.NODE_ENV) {
-	case "production":
+	case NodeEnv.PRODUCTION:
 		console.log(chalk.blue("Setting Up Production Https Server"));
 		httpServer = createProductionServer(
 			{
@@ -28,7 +30,7 @@ switch (env.NODE_ENV) {
 			app,
 		);
 		break;
-	default:
+	case NodeEnv.DEVELOPMENT:
 		console.log(chalk.yellow("Setting Up Development Http Server"));
 		httpServer = createDevelopmentServer(app);
 		break;
@@ -44,7 +46,9 @@ app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(morgan("dev"));
-app.use(responseHandler({ debugLevel: 3 }));
+app.use(
+	responseHandler({ debugLevel: env.NODE_ENV === NodeEnv.DEVELOPMENT ? 2 : 1 }),
+);
 app.use(appRouter);
 
 console.log(chalk.blue("Setting Up Socket IO"));
@@ -56,7 +60,7 @@ export const io: SocketServer = new SocketServer(httpServer, {
 
 io.use(authenticateSocket);
 
-io.on("connection", (socket: Socket) => {
+io.on(events.socket.connection, (socket: Socket) => {
 	useSocketIO(io, socket);
 });
 

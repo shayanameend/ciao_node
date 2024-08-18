@@ -1,5 +1,5 @@
 import * as zod from "zod";
-import { OsType, OtpType, ROLES, TokenType } from "../types.js";
+import { OsType, OtpType, Roles, TokenType } from "../types.js";
 
 export const jwtUserSchema = zod.object({
 	id: zod
@@ -45,7 +45,7 @@ export const registerUserBodySchema = zod.object({
 		.max(16, {
 			message: "Password should be at most 16 characters",
 		}),
-	role: zod.enum([ROLES.ADMIN, ROLES.USER], {
+	role: zod.enum([Roles.ADMIN, Roles.USER], {
 		message: "Only user and admin roles are supported",
 	}),
 	deviceToken: zod

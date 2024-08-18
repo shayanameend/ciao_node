@@ -1,4 +1,4 @@
-import chalk from "chalk";
+import { default as chalk, type ColorName } from "chalk";
 import type { NextFunction } from "express";
 import type { Data, ExtendedRequest, ExtendedResponse } from "../types.js";
 
@@ -128,7 +128,7 @@ function debugHandler({
 	data,
 }: {
 	debugLevel: 0 | 1 | 2 | 3;
-	color: "green" | "red";
+	color: ColorName;
 	body: ExtendedRequest["body"];
 	message: string;
 	data: Data;

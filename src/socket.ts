@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import type { Socket, Server as SocketServer } from "socket.io";
 import { jwtUserSchema } from "./validators/auth.validators.js";
+import { default as events } from "./config/events.js";
 
 export function useSocketIO(io: SocketServer, socket: Socket) {
 	console.log(chalk.cyan(`User Connected: ${socket.id}`));
@@ -14,7 +15,7 @@ export function useSocketIO(io: SocketServer, socket: Socket) {
 
 	// useMessageEvents(io, socket, user.data.id);
 
-	socket.on("disconnect", () => {
+	socket.on(events.socket.disconnect, () => {
 		console.log(chalk.cyan(`User Disconnected: ${socket.id}`));
 	});
 }
