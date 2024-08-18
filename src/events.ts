@@ -25,6 +25,7 @@ export default {
 		messages: {
 			receive: "group:messages:receive",
 			read: "group:messages:read",
+			delete: "group:messages:delete",
 		},
 	},
 	chat: {
@@ -45,6 +46,7 @@ export default {
 		messages: {
 			receive: "chat:messages:receive",
 			read: "chat:messages:read",
+			delete: "chat:messages:delete",
 		},
 	},
 	supportChat: {
@@ -65,6 +67,7 @@ export default {
 		messages: {
 			receive: "support_chat:messages:receive",
 			read: "support_chat:messages:read",
+			delete: "support_chat:messages:delete",
 		},
 	},
 };
