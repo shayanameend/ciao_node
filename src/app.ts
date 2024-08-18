@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { authRouter as appAuthRouter } from "./app/routers/auth.router.js";
-import { default as routes } from "./routes.js";
 import { adminRouter as dashboardAuthRouter } from "./dashboard/routers/auth.router.js";
+import { default as routes } from "./routes.js";
 
 const appRouter: Router = Router();
 
