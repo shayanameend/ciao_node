@@ -13,6 +13,7 @@
 		"prod:watch": "node --env-file=.env --watch dist/main.js",
 		"dev:start": "tsx --env-file=.env src/main.ts",
 		"dev:watch": "tsx --env-file=.env --watch src/main.ts",
+		"dev:live": "node --env-file=.env -e \"console.log(process.env.PORT || 3000)\" | xargs -I {} ngrok http http://localhost:{}",
 		"db:generate": "prisma generate",
 		"db:migrate": "prisma migrate dev",
 		"db:push": "prisma db push",
