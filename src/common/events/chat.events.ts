@@ -1,8 +1,10 @@
 import type { Socket, Server as SocketServer } from "socket.io";
-import type { JWTUserType } from "../../validators/auth.validators.js";
 import { default as events } from "../../events.js";
-import { default as chalk } from "chalk";
-import { joinChatRoom } from "../controllers/chat.controllers.js";
+import type { JWTUserType } from "../../validators/auth.validators.js";
+import {
+	joinChatRoom,
+	leaveChatRoom,
+} from "../controllers/chat.controllers.js";
 
 export function useChatEvents(
 	io: SocketServer,
@@ -11,5 +13,9 @@ export function useChatEvents(
 ) {
 	socket.on(events.chat.room.join, ({ otherUserId }, callback) => {
 		joinChatRoom({ io, socket, user }, { otherUserId }, callback);
+	});
+
+	socket.on(events.chat.room.leave, ({ roomId }) => {
+		leaveChatRoom({ io, socket, user }, { roomId });
 	});
 }
