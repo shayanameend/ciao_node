@@ -15,6 +15,10 @@ interface JoinChatRoomParams {
 	otherUserId: string;
 }
 
+interface LeaveChatRoomParams {
+	roomId: string;
+}
+
 export async function joinChatRoom(
 	{ io: _io, socket, user }: SocketParams,
 	{ otherUserId }: JoinChatRoomParams,
@@ -53,7 +57,7 @@ export async function joinChatRoom(
 
 		let room = await db.room.findFirst({
 			where: {
-				profiles: {
+				members: {
 					every: {
 						id: {
 							in: [profile1.id, profile2.id],
@@ -63,13 +67,20 @@ export async function joinChatRoom(
 			},
 			select: {
 				id: true,
+				members: {
+					select: {
+						id: true,
+						fullName: true,
+						isOnline: true,
+					},
+				},
 				group: {
 					select: {
 						id: true,
 						name: true,
 						isAdminOnly: true,
 						admin: {
-							select: { id: true, fullName: true, dob: true, isOnline: true },
+							select: { id: true, fullName: true, isOnline: true },
 						},
 					},
 				},
@@ -77,10 +88,13 @@ export async function joinChatRoom(
 					select: {
 						id: true,
 						text: true,
+						isDeleted: true,
+						isEdited: true,
+						editTime: true,
 						isRead: true,
 						readTime: true,
 						profile: {
-							select: { id: true, fullName: true, dob: true, isOnline: true },
+							select: { id: true, fullName: true, isOnline: true },
 						},
 					},
 				},
@@ -90,19 +104,26 @@ export async function joinChatRoom(
 		if (!room) {
 			room = await db.room.create({
 				data: {
-					profiles: {
+					members: {
 						connect: [{ id: profile1.id }, { id: profile2.id }],
 					},
 				},
 				select: {
 					id: true,
+					members: {
+						select: {
+							id: true,
+							fullName: true,
+							isOnline: true,
+						},
+					},
 					group: {
 						select: {
 							id: true,
 							name: true,
 							isAdminOnly: true,
 							admin: {
-								select: { id: true, fullName: true, dob: true, isOnline: true },
+								select: { id: true, fullName: true, isOnline: true },
 							},
 						},
 					},
@@ -110,10 +131,13 @@ export async function joinChatRoom(
 						select: {
 							id: true,
 							text: true,
+							isDeleted: true,
+							isEdited: true,
+							editTime: true,
 							isRead: true,
 							readTime: true,
 							profile: {
-								select: { id: true, fullName: true, dob: true, isOnline: true },
+								select: { id: true, fullName: true, isOnline: true },
 							},
 						},
 					},
@@ -132,6 +156,7 @@ export async function joinChatRoom(
 		}
 	} catch (error) {
 		console.log(chalk.red(`Error Joining Room: ${user.id}`));
+		console.error(error);
 
 		if (callback) {
 			return callback({
@@ -144,7 +169,7 @@ export async function joinChatRoom(
 
 export async function leaveChatRoom(
 	{ io: _io, socket, user }: SocketParams,
-	{ roomId }: { roomId: string },
+	{ roomId }: LeaveChatRoomParams,
 ) {
 	socket.leave(roomId);
 

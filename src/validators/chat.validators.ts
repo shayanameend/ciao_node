@@ -4,16 +4,25 @@ export const ChatRoomJoinResponseSchema = zod.object({
 	room: zod.nullable(
 		zod.object({
 			id: zod.string(),
+			members: zod.array(
+				zod.object({
+					id: zod.string(),
+					fullName: zod.string(),
+					isOnline: zod.boolean(),
+				}),
+			),
 			messages: zod.array(
 				zod.object({
 					id: zod.string(),
 					text: zod.string(),
 					isRead: zod.boolean(),
 					readTime: zod.date().nullable(),
+					isDeleted: zod.boolean(),
+					isEdited: zod.boolean(),
+					editTime: zod.date().nullable(),
 					profile: zod.object({
 						id: zod.string(),
 						fullName: zod.string(),
-						dob: zod.date(),
 						isOnline: zod.boolean(),
 					}),
 				}),
@@ -26,7 +35,6 @@ export const ChatRoomJoinResponseSchema = zod.object({
 					admin: zod.object({
 						id: zod.string(),
 						fullName: zod.string(),
-						dob: zod.date(),
 						isOnline: zod.boolean(),
 					}),
 				}),

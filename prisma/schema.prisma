@@ -45,16 +45,18 @@ model Otp {
 }
 
 model Profile {
-  id        String    @id @default(uuid())
-  userId    String    @unique
-  fullName  String
-  dob       DateTime
-  isOnline  Boolean   @default(false)
-  messages  Message[]
-  rooms     Room[]
-  groups    Group[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id            String    @id @default(uuid())
+  userId        String    @unique
+  fullName      String
+  dob           DateTime
+  isOnline      Boolean   @default(false)
+  messages      Message[]
+  rooms         Room[]    @relation("members")
+  archivedRooms Room[]    @relation("archived")
+  deletedRooms  Room[]    @relation("deleted")
+  groups        Group[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -62,6 +64,9 @@ model Profile {
 model Message {
   id        String    @id @default(uuid())
   text      String
+  isDeleted Boolean   @default(false)
+  isEdited  Boolean   @default(false)
+  editTime  DateTime?
   isRead    Boolean   @default(false)
   readTime  DateTime?
   profileId String
@@ -74,12 +79,14 @@ model Message {
 }
 
 model Room {
-  id        String    @id @default(uuid())
-  profiles  Profile[]
-  messages  Message[]
-  group     Group?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id         String    @id @default(uuid())
+  group      Group?
+  messages   Message[]
+  members    Profile[] @relation("members")
+  archivedBy Profile[] @relation("archived")
+  deletedBy  Profile[] @relation("deleted")
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 }
 
 model Group {

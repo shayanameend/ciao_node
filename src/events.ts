@@ -8,7 +8,6 @@ export default {
 		create: "group:create",
 		join: "group:join",
 		leave: "group:leave",
-		hide: "group:hide",
 		archive: "group:archive",
 		delete: "group:delete",
 		room: {
@@ -29,7 +28,6 @@ export default {
 		},
 	},
 	chat: {
-		hide: "chat:hide",
 		archive: "chat:archive",
 		delete: "chat:delete",
 		room: {
@@ -47,27 +45,6 @@ export default {
 			receive: "chat:messages:receive",
 			read: "chat:messages:read",
 			delete: "chat:messages:delete",
-		},
-	},
-	supportChat: {
-		hide: "support_chat:hide",
-		archive: "support_chat:archive",
-		delete: "support_chat:delete",
-		room: {
-			join: "support_chat:room:join",
-			leave: "support_chat:room:leave",
-		},
-		message: {
-			send: "support_chat:message:send",
-			receive: "support_chat:message:receive",
-			read: "support_chat:message:read",
-			edit: "support_chat:message:edit",
-			delete: "support_chat:message:delete",
-		},
-		messages: {
-			receive: "support_chat:messages:receive",
-			read: "support_chat:messages:read",
-			delete: "support_chat:messages:delete",
 		},
 	},
 };
