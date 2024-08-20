@@ -8,7 +8,6 @@ export const ChatRoomJoinResponseSchema = zod.object({
 				zod.object({
 					id: zod.string(),
 					fullName: zod.string(),
-					isOnline: zod.boolean(),
 				}),
 			),
 			messages: zod.array(
@@ -17,13 +16,17 @@ export const ChatRoomJoinResponseSchema = zod.object({
 					text: zod.string(),
 					isRead: zod.boolean(),
 					readTime: zod.date().nullable(),
-					isDeleted: zod.boolean(),
+					deletedBy: zod.array(
+						zod.object({
+							id: zod.string(),
+							fullName: zod.string(),
+						}),
+					),
 					isEdited: zod.boolean(),
 					editTime: zod.date().nullable(),
 					profile: zod.object({
 						id: zod.string(),
 						fullName: zod.string(),
-						isOnline: zod.boolean(),
 					}),
 				}),
 			),
@@ -35,7 +38,6 @@ export const ChatRoomJoinResponseSchema = zod.object({
 					admin: zod.object({
 						id: zod.string(),
 						fullName: zod.string(),
-						isOnline: zod.boolean(),
 					}),
 				}),
 			),

@@ -15,11 +15,49 @@ interface JoinChatRoomParams {
 	otherUserId: string;
 }
 
+interface ReceiveChatRoomMessagesParams {
+	roomId: string;
+}
+
+interface ReadChatRoomMessagesParams {
+	roomId: string;
+}
+
+interface DeleteChatRoomMessagesParams {
+	roomId: string;
+}
+
 interface LeaveChatRoomParams {
 	roomId: string;
 }
 
-export async function joinChatRoom(
+interface ArchiveChatRoomParams {
+	roomId: string;
+}
+
+interface DeleteChatRoomParams {
+	roomId: string;
+}
+
+interface SendChatRoomMessageParams {
+	roomId: string;
+	text: string;
+}
+
+interface ReadChatRoomMessageParams {
+	messageId: string;
+}
+
+interface EditChatRoomMessageParams {
+	messageId: string;
+	newText: string;
+}
+
+interface DeleteChatRoomMessageParams {
+	messageId: string;
+}
+
+export async function joinPrivateChatRoom(
 	{ io: _io, socket, user }: SocketParams,
 	{ otherUserId }: JoinChatRoomParams,
 	callback?: ({
@@ -71,7 +109,6 @@ export async function joinChatRoom(
 					select: {
 						id: true,
 						fullName: true,
-						isOnline: true,
 					},
 				},
 				group: {
@@ -80,7 +117,7 @@ export async function joinChatRoom(
 						name: true,
 						isAdminOnly: true,
 						admin: {
-							select: { id: true, fullName: true, isOnline: true },
+							select: { id: true, fullName: true },
 						},
 					},
 				},
@@ -88,13 +125,18 @@ export async function joinChatRoom(
 					select: {
 						id: true,
 						text: true,
-						isDeleted: true,
+						deletedBy: {
+							select: {
+								id: true,
+								fullName: true,
+							},
+						},
 						isEdited: true,
 						editTime: true,
 						isRead: true,
 						readTime: true,
 						profile: {
-							select: { id: true, fullName: true, isOnline: true },
+							select: { id: true, fullName: true },
 						},
 					},
 				},
@@ -114,7 +156,6 @@ export async function joinChatRoom(
 						select: {
 							id: true,
 							fullName: true,
-							isOnline: true,
 						},
 					},
 					group: {
@@ -123,7 +164,7 @@ export async function joinChatRoom(
 							name: true,
 							isAdminOnly: true,
 							admin: {
-								select: { id: true, fullName: true, isOnline: true },
+								select: { id: true, fullName: true },
 							},
 						},
 					},
@@ -131,13 +172,18 @@ export async function joinChatRoom(
 						select: {
 							id: true,
 							text: true,
-							isDeleted: true,
+							deletedBy: {
+								select: {
+									id: true,
+									fullName: true,
+								},
+							},
 							isEdited: true,
 							editTime: true,
 							isRead: true,
 							readTime: true,
 							profile: {
-								select: { id: true, fullName: true, isOnline: true },
+								select: { id: true, fullName: true },
 							},
 						},
 					},
@@ -167,11 +213,141 @@ export async function joinChatRoom(
 	}
 }
 
-export async function leaveChatRoom(
+export async function receivePrivateChatRoomMessages(
+	{ io: _io, socket, user }: SocketParams,
+	{ roomId }: ReceiveChatRoomMessagesParams,
+	callback?: ({
+		error,
+		data,
+	}: {
+		error?: unknown;
+		data: unknown[];
+	}) => void,
+) {}
+
+export async function readPrivateChatRoomMessages(
+	{ io: _io, socket, user }: SocketParams,
+	{ roomId }: ReadChatRoomMessagesParams,
+) {}
+
+export async function deletePrivateChatRoomMessages(
+	{ io: _io, socket, user }: SocketParams,
+	{ roomId }: DeleteChatRoomMessagesParams,
+) {}
+
+export async function sendPrivateChatRoomMessage(
+	{ io: _io, socket, user }: SocketParams,
+	{ roomId, text }: SendChatRoomMessageParams,
+) {}
+
+export async function readPrivateChatRoomMessage(
+	{ io: _io, socket, user }: SocketParams,
+	{ messageId }: ReadChatRoomMessageParams,
+) {}
+
+export async function editPrivateChatRoomMessage(
+	{ io: _io, socket, user }: SocketParams,
+	{ messageId, newText }: EditChatRoomMessageParams,
+) {}
+
+export async function deletePrivateChatRoomMessage(
+	{ io: _io, socket, user }: SocketParams,
+	{ messageId }: DeleteChatRoomMessageParams,
+) {}
+
+export async function leavePrivateChatRoom(
 	{ io: _io, socket, user }: SocketParams,
 	{ roomId }: LeaveChatRoomParams,
 ) {
 	socket.leave(roomId);
 
 	console.log(chalk.cyan(`User Left Room: ${user.id}`));
+}
+
+export async function archivePrivateChatRoom(
+	{ io: _io, socket, user }: SocketParams,
+	{ roomId }: ArchiveChatRoomParams,
+) {
+	try {
+		const profile = await db.profile.findUnique({
+			where: {
+				userId: user.id,
+			},
+			select: {
+				id: true,
+			},
+		});
+
+		if (!profile) {
+			return socket.emit(events.socket.error, {
+				message: "Profile not found",
+			});
+		}
+
+		await db.room.update({
+			where: {
+				id: roomId,
+			},
+			data: {
+				archivedBy: {
+					connect: {
+						id: profile.id,
+					},
+				},
+			},
+		});
+
+		console.log(chalk.cyan(`Room Archived: ${roomId} by ${user.id}`));
+	} catch (error) {
+		console.log(chalk.red(`Error Archiving Room: ${user.id}`));
+		console.error(error);
+
+		socket.emit(events.socket.error, {
+			message: "Error archiving room",
+		});
+	}
+}
+
+export async function deletePrivateChatRoom(
+	{ io: _io, socket, user }: SocketParams,
+	{ roomId }: DeleteChatRoomParams,
+) {
+	try {
+		const profile = await db.profile.findUnique({
+			where: {
+				userId: user.id,
+			},
+			select: {
+				id: true,
+			},
+		});
+
+		if (!profile) {
+			return socket.emit(events.socket.error, {
+				message: "Profile not found",
+			});
+		}
+
+		await db.room.update({
+			where: {
+				id: roomId,
+			},
+			data: {
+				deletedBy: {
+					connect: {
+						id: profile.id,
+					},
+				},
+			},
+		});
+
+		console.log(chalk.cyan(`Room Deleted: ${roomId} by ${user.id}`));
+	} catch (error) {
+		console.log(chalk.red(`Error Deleting Room: ${user.id}`));
+		console.error(error);
+
+		socket.emit(events.socket.error, {
+			message: "Error deleting room",
+		});
+	}
 }

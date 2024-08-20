@@ -4,47 +4,64 @@ export default {
 		error: "error",
 		disconnect: "disconnect",
 	},
-	group: {
-		create: "group:create",
-		join: "group:join",
-		leave: "group:leave",
-		archive: "group:archive",
-		delete: "group:delete",
+	recentChats: {
 		room: {
-			join: "group:room:join",
-			leave: "group:room:leave",
+			join: "recent_chats:room:join",
+			leave: "recent_chats:room:leave",
 		},
-		message: {
-			send: "group:message:send",
-			receive: "group:message:receive",
-			read: "group:message:read",
-			edit: "group:message:edit",
-			delete: "group:message:delete",
+		users: {
+			online: "recent_chats:users:online",
 		},
-		messages: {
-			receive: "group:messages:receive",
-			read: "group:messages:read",
-			delete: "group:messages:delete",
+		privateChats: {
+			receive: "recent_chats:private_chats:receive",
+		},
+		groupsChats: {
+			receive: "recent_chats:groups_chats:receive",
 		},
 	},
-	chat: {
-		archive: "chat:archive",
-		delete: "chat:delete",
+	privateChat: {
+		archive: "private_chat:archive",
+		delete: "private_chat:delete",
 		room: {
-			join: "chat:room:join",
-			leave: "chat:room:leave",
-		},
-		message: {
-			send: "chat:message:send",
-			receive: "chat:message:receive",
-			read: "chat:message:read",
-			edit: "chat:message:edit",
-			delete: "chat:message:delete",
+			join: "private_chat:room:join",
+			leave: "private_chat:room:leave",
 		},
 		messages: {
-			receive: "chat:messages:receive",
-			read: "chat:messages:read",
-			delete: "chat:messages:delete",
+			receive: "private_chat:messages:receive",
+			read: "private_chat:messages:read",
+			delete: "private_chat:messages:delete",
+		},
+		message: {
+			send: "private_chat:message:send",
+			receive: "private_chat:message:receive",
+			read: "private_chat:message:read",
+			edit: "private_chat:message:edit",
+			delete: "private_chat:message:delete",
+		},
+	},
+	groupChat: {
+		create: "group_chat:create",
+		join: "group_chat:join",
+		leave: "group_chat:leave",
+		archive: "group_chat:archive",
+		delete: "group_chat:delete",
+		room: {
+			join: "group_chat:room:join",
+			leave: "group_chat:room:leave",
+		},
+		messages: {
+			receive: "group_chat:messages:receive",
+			read: "group_chat:messages:read",
+			delete: "group_chat:messages:delete",
+		},
+		message: {
+			send: "group_chat:message:send",
+			receive: "group_chat:message:receive",
+			read: "group_chat:message:read",
+			edit: "group_chat:message:edit",
+			delete: "group_chat:message:delete",
 		},
 	},
 };
+
+// delete for every one

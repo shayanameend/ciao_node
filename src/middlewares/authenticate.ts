@@ -45,7 +45,7 @@ export async function authenticateSocket(
 	socket: Socket,
 	next: (err?: Error) => void,
 ) {
-	const token = socket.handshake.auth.token;
+	const token = socket.handshake.headers.token as string | undefined;
 	if (!token) {
 		return next(new Error("Token is required"));
 	}
