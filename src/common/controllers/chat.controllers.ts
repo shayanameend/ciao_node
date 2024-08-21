@@ -223,7 +223,90 @@ export async function receivePrivateChatRoomMessages(
 		error?: unknown;
 		data: unknown[];
 	}) => void,
-) {}
+) {
+	try {
+		const profile = await db.profile.findUnique({
+			where: {
+				userId: user.id,
+			},
+			select: {
+				id: true,
+			},
+		});
+
+		if (!profile) {
+			return socket.emit(events.socket.error, {
+				message: "Profile not found",
+			});
+		}
+
+		const messages = await db.message.findMany({
+			where: {
+				roomId,
+			},
+			select: {
+				id: true,
+				text: true,
+				isEdited: true,
+				editTime: true,
+				isRead: true,
+				readTime: true,
+				deletedBy: {
+					select: {
+						id: true,
+						fullName: true,
+					},
+				},
+				profile: {
+					select: {
+						id: true,
+						fullName: true,
+					},
+				},
+				room: {
+					select: {
+						id: true,
+						members: {
+							select: {
+								id: true,
+								fullName: true,
+							},
+						},
+					},
+				},
+			},
+		});
+
+		console.log(
+			chalk.cyan(`Messages Received: ${messages.length} in ${roomId}`),
+		);
+
+		if (callback) {
+			return callback({
+				data: messages.filter(
+					(message) =>
+						!message.deletedBy
+							.map((deletedBy) => deletedBy.id)
+							.includes(profile.id),
+				),
+			});
+		}
+	} catch (error) {
+		console.log(chalk.red(`Error Receiving Messages: ${user.id}`));
+		console.error(error);
+
+		socket.emit(events.socket.error, {
+			message: "Error receiving messages",
+		});
+
+		if (callback) {
+			return callback({
+				error,
+				data: [],
+			});
+		}
+	}
+}
 
 export async function readPrivateChatRoomMessages(
 	{ io: _io, socket, user }: SocketParams,
