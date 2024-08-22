@@ -11,12 +11,13 @@ export default {
 		},
 		users: {
 			online: "recent_chats:users:online",
+			offline: "recent_chats:users:offline",
 		},
 		privateChats: {
 			receive: "recent_chats:private_chats:receive",
 		},
-		groupsChats: {
-			receive: "recent_chats:groups_chats:receive",
+		groupChats: {
+			receive: "recent_chats:group_chats:receive",
 		},
 	},
 	privateChat: {
