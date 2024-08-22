@@ -3,7 +3,7 @@ import type { Socket, Server as SocketServer } from "socket.io";
 import { db } from "../../db.js";
 import { default as events } from "../../events.js";
 import type { JWTUserType } from "../../validators/auth.validators.js";
-import type { ChatRoomJoinResponse } from "../../validators/chat.validators.js";
+import type { ChatRoomJoinResponse } from "../../validators/private_chat.validators.js";
 
 interface SocketParams {
 	io: SocketServer;
