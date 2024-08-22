@@ -370,6 +370,54 @@ export async function sendPrivateChatRoomMessage(
 		});
 
 		console.log(chalk.cyan(`Message Sent: ${message.id} in ${roomId}`));
+
+		const room = await db.room.findUnique({
+			where: { id: roomId },
+			select: { members: { select: { id: true } } },
+		});
+
+		for (const member of room?.members || []) {
+			const privateChats = await db.room.findMany({
+				where: {
+					members: {
+						some: {
+							id: member.id,
+						},
+					},
+					group: {
+						is: null,
+					},
+				},
+				select: {
+					id: true,
+					members: {
+						select: {
+							id: true,
+							fullName: true,
+						},
+					},
+					messages: {
+						select: {
+							id: true,
+							text: true,
+							profile: {
+								select: { id: true, fullName: true },
+							},
+						},
+						orderBy: {
+							createdAt: "desc",
+						},
+						take: 1,
+					},
+				},
+			});
+
+			io.to(member.id).emit(events.recentChats.privateChats.receive, {
+				privateChats,
+			});
+
+			console.log(chalk.cyan(`Private Chats Updated for ${member.id}`));
+		}
 	} catch (error) {
 		console.log(chalk.red(`Error Sending Message: ${user.id}`));
 		console.error(error);
@@ -506,6 +554,54 @@ export async function editPrivateChatRoomMessage(
 				`Message Edited: ${updatedMessage.id} in ${updatedMessage.room.id}`,
 			),
 		);
+
+		const room = await db.room.findUnique({
+			where: { id: updatedMessage.room.id },
+			select: { members: { select: { id: true } } },
+		});
+
+		for (const member of room?.members || []) {
+			const privateChats = await db.room.findMany({
+				where: {
+					members: {
+						some: {
+							id: member.id,
+						},
+					},
+					group: {
+						is: null,
+					},
+				},
+				select: {
+					id: true,
+					members: {
+						select: {
+							id: true,
+							fullName: true,
+						},
+					},
+					messages: {
+						select: {
+							id: true,
+							text: true,
+							profile: {
+								select: { id: true, fullName: true },
+							},
+						},
+						orderBy: {
+							createdAt: "desc",
+						},
+						take: 1,
+					},
+				},
+			});
+
+			io.to(member.id).emit(events.recentChats.privateChats.receive, {
+				privateChats,
+			});
+
+			console.log(chalk.cyan(`Private Chats Updated for ${member.id}`));
+		}
 	} catch (error) {
 		console.log(chalk.red(`Error Editing Message: ${user.id}`));
 		console.error(error);
