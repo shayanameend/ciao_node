@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import type { JWTUserType } from "./validators/auth.validators.js";
+import type { Socket, Server as SocketServer } from "socket.io";
 
 export enum NodeEnv {
 	DEVELOPMENT = "development",
@@ -48,4 +49,10 @@ export interface ExtendedResponse extends Response {
 	unauthorized?: (init: { data?: Data; message?: string }) => void;
 	notFound?: (init: { data?: Data; message?: string }) => void;
 	internalServerError?: (init: { data?: Data; message?: string }) => void;
+}
+
+export interface SocketParams {
+	io: SocketServer;
+	socket: Socket;
+	user: JWTUserType;
 }
