@@ -56,6 +56,10 @@ export async function joinRecentChatsRoom({ io, socket, user }: SocketParams) {
 							select: { id: true, fullName: true },
 						},
 					},
+					orderBy: {
+						createdAt: "desc",
+					},
+					take: 1,
 				},
 			},
 		});
@@ -97,6 +101,10 @@ export async function joinRecentChatsRoom({ io, socket, user }: SocketParams) {
 							select: { id: true, fullName: true },
 						},
 					},
+					orderBy: {
+						createdAt: "desc",
+					},
+					take: 1,
 				},
 			},
 		});
