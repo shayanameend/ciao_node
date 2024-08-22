@@ -14,7 +14,7 @@ import {
 	sendPrivateChatRoomMessage,
 } from "../controllers/private_chat.controllers.js";
 
-export function useChatEvents(
+export function usePrivateChatEvents(
 	io: SocketServer,
 	socket: Socket,
 	user: JWTUserType,

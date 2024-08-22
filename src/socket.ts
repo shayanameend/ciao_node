@@ -1,6 +1,6 @@
 import { default as chalk } from "chalk";
 import type { Socket, Server as SocketServer } from "socket.io";
-import { useChatEvents } from "./common/events/private_chat.events.js";
+import { usePrivateChatEvents } from "./common/events/private_chat.events.js";
 import { default as events } from "./events.js";
 import { jwtUserSchema } from "./validators/auth.validators.js";
 
@@ -14,7 +14,7 @@ export function useSocketIO(io: SocketServer, socket: Socket) {
 		return socket.emit(events.socket.error, "Invalid Token");
 	}
 
-	useChatEvents(io, socket, user.data);
+	usePrivateChatEvents(io, socket, user.data);
 
 	socket.on(events.socket.disconnect, () => {
 		console.log(chalk.cyan(`User Disconnected: ${socket.id}`));
