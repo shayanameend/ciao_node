@@ -15,10 +15,6 @@ interface JoinChatRoomParams {
 	otherUserId: string;
 }
 
-interface ReceiveChatRoomMessagesParams {
-	roomId: string;
-}
-
 interface ReadChatRoomMessagesParams {
 	roomId: string;
 }
@@ -88,9 +84,7 @@ export async function joinPrivateChatRoom(
 		});
 
 		if (!profile1 || !profile2) {
-			return socket.emit(events.socket.error, {
-				message: "Profile not found",
-			});
+			throw new Error("Profile not found");
 		}
 
 		let room = await db.room.findFirst({
@@ -125,16 +119,16 @@ export async function joinPrivateChatRoom(
 					select: {
 						id: true,
 						text: true,
+						isRead: true,
+						readTime: true,
+						isEdited: true,
+						editTime: true,
 						deletedBy: {
 							select: {
 								id: true,
 								fullName: true,
 							},
 						},
-						isEdited: true,
-						editTime: true,
-						isRead: true,
-						readTime: true,
 						profile: {
 							select: { id: true, fullName: true },
 						},
@@ -172,16 +166,16 @@ export async function joinPrivateChatRoom(
 						select: {
 							id: true,
 							text: true,
+							isRead: true,
+							readTime: true,
+							isEdited: true,
+							editTime: true,
 							deletedBy: {
 								select: {
 									id: true,
 									fullName: true,
 								},
 							},
-							isEdited: true,
-							editTime: true,
-							isRead: true,
-							readTime: true,
 							profile: {
 								select: { id: true, fullName: true },
 							},
@@ -205,111 +199,26 @@ export async function joinPrivateChatRoom(
 		console.error(error);
 
 		if (callback) {
-			return callback({
+			callback({
 				error,
 				data: { room: null },
 			});
 		}
-	}
-}
 
-export async function receivePrivateChatRoomMessages(
-	{ io: _io, socket, user }: SocketParams,
-	{ roomId }: ReceiveChatRoomMessagesParams,
-	callback?: ({
-		error,
-		data,
-	}: {
-		error?: unknown;
-		data: unknown[];
-	}) => void,
-) {
-	try {
-		const profile = await db.profile.findUnique({
-			where: {
-				userId: user.id,
-			},
-			select: {
-				id: true,
-			},
-		});
-
-		if (!profile) {
+		if (error instanceof Error) {
 			return socket.emit(events.socket.error, {
-				message: "Profile not found",
+				message: error.message,
 			});
 		}
 
-		const messages = await db.message.findMany({
-			where: {
-				roomId,
-			},
-			select: {
-				id: true,
-				text: true,
-				isEdited: true,
-				editTime: true,
-				isRead: true,
-				readTime: true,
-				deletedBy: {
-					select: {
-						id: true,
-						fullName: true,
-					},
-				},
-				profile: {
-					select: {
-						id: true,
-						fullName: true,
-					},
-				},
-				room: {
-					select: {
-						id: true,
-						members: {
-							select: {
-								id: true,
-								fullName: true,
-							},
-						},
-					},
-				},
-			},
+		return socket.emit(events.socket.error, {
+			message: "Error joining room",
 		});
-
-		console.log(
-			chalk.cyan(`Messages Received: ${messages.length} in ${roomId}`),
-		);
-
-		if (callback) {
-			return callback({
-				data: messages.filter(
-					(message) =>
-						!message.deletedBy
-							.map((deletedBy) => deletedBy.id)
-							.includes(profile.id),
-				),
-			});
-		}
-	} catch (error) {
-		console.log(chalk.red(`Error Receiving Messages: ${user.id}`));
-		console.error(error);
-
-		socket.emit(events.socket.error, {
-			message: "Error receiving messages",
-		});
-
-		if (callback) {
-			return callback({
-				error,
-				data: [],
-			});
-		}
 	}
 }
 
 export async function readPrivateChatRoomMessages(
-	{ io: _io, socket, user }: SocketParams,
+	{ io, socket, user }: SocketParams,
 	{ roomId }: ReadChatRoomMessagesParams,
 ) {
 	try {
@@ -323,9 +232,7 @@ export async function readPrivateChatRoomMessages(
 		});
 
 		if (!profile) {
-			return socket.emit(events.socket.error, {
-				message: "Profile not found",
-			});
+			throw new Error("Profile not found");
 		}
 
 		const messages = await db.message.updateMany({
@@ -339,12 +246,22 @@ export async function readPrivateChatRoomMessages(
 			},
 		});
 
+		io.to(roomId).emit(events.privateChat.messages.receive, {
+			messages,
+		});
+
 		console.log(chalk.cyan(`Messages Read: ${messages.count} in ${roomId}`));
 	} catch (error) {
 		console.log(chalk.red(`Error Reading Messages: ${user.id}`));
 		console.error(error);
 
-		socket.emit(events.socket.error, {
+		if (error instanceof Error) {
+			return socket.emit(events.socket.error, {
+				message: error.message,
+			});
+		}
+
+		return socket.emit(events.socket.error, {
 			message: "Error reading messages",
 		});
 	}
@@ -365,9 +282,7 @@ export async function deletePrivateChatRoomMessages(
 		});
 
 		if (!profile) {
-			return socket.emit(events.socket.error, {
-				message: "Profile not found",
-			});
+			throw new Error("Profile not found");
 		}
 
 		const messages = await db.message.findMany({
@@ -398,7 +313,13 @@ export async function deletePrivateChatRoomMessages(
 		console.log(chalk.red(`Error Deleting Messages: ${user.id}`));
 		console.error(error);
 
-		socket.emit(events.socket.error, {
+		if (error instanceof Error) {
+			return socket.emit(events.socket.error, {
+				message: error.message,
+			});
+		}
+
+		return socket.emit(events.socket.error, {
 			message: "Error deleting messages",
 		});
 	}
@@ -419,9 +340,7 @@ export async function sendPrivateChatRoomMessage(
 		});
 
 		if (!profile) {
-			return socket.emit(events.socket.error, {
-				message: "Profile not found",
-			});
+			throw new Error("Profile not found");
 		}
 
 		const message = await db.message.create({
@@ -432,6 +351,23 @@ export async function sendPrivateChatRoomMessage(
 				},
 				room: {
 					connect: { id: roomId },
+				},
+			},
+			select: {
+				id: true,
+				text: true,
+				isRead: true,
+				readTime: true,
+				isEdited: true,
+				editTime: true,
+				deletedBy: {
+					select: { id: true, fullName: true },
+				},
+				profile: {
+					select: { id: true, fullName: true },
+				},
+				room: {
+					select: { id: true },
 				},
 			},
 		});
@@ -445,7 +381,13 @@ export async function sendPrivateChatRoomMessage(
 		console.log(chalk.red(`Error Sending Message: ${user.id}`));
 		console.error(error);
 
-		socket.emit(events.socket.error, {
+		if (error instanceof Error) {
+			return socket.emit(events.socket.error, {
+				message: error.message,
+			});
+		}
+
+		return socket.emit(events.socket.error, {
 			message: "Error sending message",
 		});
 	}
@@ -464,11 +406,8 @@ export async function readPrivateChatRoomMessage(
 				id: true,
 			},
 		});
-
 		if (!profile) {
-			return socket.emit(events.socket.error, {
-				message: "Profile not found",
-			});
+			throw new Error("Profile not found");
 		}
 
 		const updatedMessage = await db.message.update({
@@ -477,22 +416,45 @@ export async function readPrivateChatRoomMessage(
 				isRead: true,
 				readTime: new Date(),
 			},
+			select: {
+				id: true,
+				text: true,
+				isRead: true,
+				readTime: true,
+				isEdited: true,
+				editTime: true,
+				deletedBy: {
+					select: { id: true, fullName: true },
+				},
+				profile: {
+					select: { id: true, fullName: true },
+				},
+				room: {
+					select: { id: true },
+				},
+			},
 		});
 
-		io.to(updatedMessage.roomId).emit(events.privateChat.message.receive, {
+		io.to(updatedMessage.room.id).emit(events.privateChat.message.receive, {
 			message: updatedMessage,
 		});
 
 		console.log(
 			chalk.cyan(
-				`Message Read: ${updatedMessage.id} in ${updatedMessage.roomId}`,
+				`Message Read: ${updatedMessage.id} in ${updatedMessage.room.id}`,
 			),
 		);
 	} catch (error) {
 		console.log(chalk.red(`Error Reading Message: ${user.id}`));
 		console.error(error);
 
-		socket.emit(events.socket.error, {
+		if (error instanceof Error) {
+			return socket.emit(events.socket.error, {
+				message: error.message,
+			});
+		}
+
+		return socket.emit(events.socket.error, {
 			message: "Error reading message",
 		});
 	}
@@ -513,9 +475,7 @@ export async function editPrivateChatRoomMessage(
 		});
 
 		if (!profile) {
-			return socket.emit(events.socket.error, {
-				message: "Profile not found",
-			});
+			throw new Error("Profile not found");
 		}
 
 		const updatedMessage = await db.message.update({
@@ -525,22 +485,45 @@ export async function editPrivateChatRoomMessage(
 				isEdited: true,
 				editTime: new Date(),
 			},
+			select: {
+				id: true,
+				text: true,
+				isRead: true,
+				readTime: true,
+				isEdited: true,
+				editTime: true,
+				deletedBy: {
+					select: { id: true, fullName: true },
+				},
+				profile: {
+					select: { id: true, fullName: true },
+				},
+				room: {
+					select: { id: true },
+				},
+			},
 		});
 
-		io.to(updatedMessage.roomId).emit(events.privateChat.message.receive, {
+		io.to(updatedMessage.room.id).emit(events.privateChat.message.receive, {
 			message: updatedMessage,
 		});
 
 		console.log(
 			chalk.cyan(
-				`Message Edited: ${updatedMessage.id} in ${updatedMessage.roomId}`,
+				`Message Edited: ${updatedMessage.id} in ${updatedMessage.room.id}`,
 			),
 		);
 	} catch (error) {
 		console.log(chalk.red(`Error Editing Message: ${user.id}`));
 		console.error(error);
 
-		socket.emit(events.socket.error, {
+		if (error instanceof Error) {
+			return socket.emit(events.socket.error, {
+				message: error.message,
+			});
+		}
+
+		return socket.emit(events.socket.error, {
 			message: "Error editing message",
 		});
 	}
@@ -561,9 +544,7 @@ export async function deletePrivateChatRoomMessage(
 		});
 
 		if (!profile) {
-			return socket.emit(events.socket.error, {
-				message: "Profile not found",
-			});
+			throw new Error("Profile not found");
 		}
 
 		await db.message.update({
@@ -580,7 +561,13 @@ export async function deletePrivateChatRoomMessage(
 		console.log(chalk.red(`Error Deleting Message: ${user.id}`));
 		console.error(error);
 
-		socket.emit(events.socket.error, {
+		if (error instanceof Error) {
+			return socket.emit(events.socket.error, {
+				message: error.message,
+			});
+		}
+
+		return socket.emit(events.socket.error, {
 			message: "Error deleting message",
 		});
 	}
@@ -608,11 +595,8 @@ export async function archivePrivateChatRoom(
 				id: true,
 			},
 		});
-
 		if (!profile) {
-			return socket.emit(events.socket.error, {
-				message: "Profile not found",
-			});
+			throw new Error("Profile not found");
 		}
 
 		await db.room.update({
@@ -633,7 +617,13 @@ export async function archivePrivateChatRoom(
 		console.log(chalk.red(`Error Archiving Room: ${user.id}`));
 		console.error(error);
 
-		socket.emit(events.socket.error, {
+		if (error instanceof Error) {
+			return socket.emit(events.socket.error, {
+				message: error.message,
+			});
+		}
+
+		return socket.emit(events.socket.error, {
 			message: "Error archiving room",
 		});
 	}
@@ -654,9 +644,7 @@ export async function deletePrivateChatRoom(
 		});
 
 		if (!profile) {
-			return socket.emit(events.socket.error, {
-				message: "Profile not found",
-			});
+			throw new Error("Profile not found");
 		}
 
 		await db.room.update({
@@ -677,7 +665,13 @@ export async function deletePrivateChatRoom(
 		console.log(chalk.red(`Error Deleting Room: ${user.id}`));
 		console.error(error);
 
-		socket.emit(events.socket.error, {
+		if (error instanceof Error) {
+			return socket.emit(events.socket.error, {
+				message: error.message,
+			});
+		}
+
+		return socket.emit(events.socket.error, {
 			message: "Error deleting room",
 		});
 	}

@@ -11,7 +11,6 @@ import {
 	leavePrivateChatRoom,
 	readPrivateChatRoomMessage,
 	readPrivateChatRoomMessages,
-	receivePrivateChatRoomMessages,
 	sendPrivateChatRoomMessage,
 } from "../controllers/chat.controllers.js";
 
@@ -22,10 +21,6 @@ export function useChatEvents(
 ) {
 	socket.on(events.privateChat.room.join, ({ otherUserId }, callback) => {
 		joinPrivateChatRoom({ io, socket, user }, { otherUserId }, callback);
-	});
-
-	socket.on(events.privateChat.messages.receive, ({ roomId }) => {
-		receivePrivateChatRoomMessages({ io, socket, user }, { roomId });
 	});
 
 	socket.on(events.privateChat.messages.read, ({ roomId }) => {
