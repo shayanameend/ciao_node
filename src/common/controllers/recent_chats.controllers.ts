@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import { db } from "../../db.js";
-import type { SocketParams } from "../../types.js";
 import events from "../../events.js";
+import type { SocketParams } from "../../types.js";
 
 export async function joinRecentChatsRoom({ io, socket, user }: SocketParams) {
 	try {

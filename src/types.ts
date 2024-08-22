@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
-import type { JWTUserType } from "./validators/auth.validators.js";
 import type { Socket, Server as SocketServer } from "socket.io";
+import type { JWTUserType } from "./validators/auth.validators.js";
 
 export enum NodeEnv {
 	DEVELOPMENT = "development",
