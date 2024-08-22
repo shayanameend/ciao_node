@@ -36,6 +36,9 @@ export async function joinRecentChatsRoom({ io, socket, user }: SocketParams) {
 						id: profile.id,
 					},
 				},
+				group: {
+					is: null,
+				},
 			},
 			select: {
 				id: true,
@@ -67,6 +70,9 @@ export async function joinRecentChatsRoom({ io, socket, user }: SocketParams) {
 					some: {
 						id: profile.id,
 					},
+				},
+				group: {
+					isNot: null,
 				},
 			},
 			select: {
