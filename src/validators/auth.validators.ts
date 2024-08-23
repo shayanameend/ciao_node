@@ -55,19 +55,9 @@ export const registerUserBodySchema = zod.object({
 		.max(16, {
 			message: "Password should be at most 16 characters",
 		}),
-	role: zod.enum(
-		[
-			OsType.ANDROID,
-			OsType.IOS,
-			OsType.MACOS,
-			OsType.LINUX,
-			OsType.MACOS,
-			OsType.WEB,
-		],
-		{
-			message: "Only user and admin roles are supported",
-		},
-	),
+	role: zod.enum([Roles.ADMIN, Roles.USER], {
+		message: "Only user and admin roles are supported",
+	}),
 	deviceToken: zod
 		.string({
 			message: "Device token is required",
