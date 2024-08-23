@@ -22,9 +22,19 @@ export const jwtUserSchema = zod.object({
 	deviceToken: zod.string({
 		message: "Device token is required",
 	}),
-	deviceType: zod.enum([OsType.ANDROID, OsType.IOS], {
-		message: "Only Android and iOS devices are supported",
-	}),
+	deviceType: zod.enum(
+		[
+			OsType.ANDROID,
+			OsType.IOS,
+			OsType.MACOS,
+			OsType.LINUX,
+			OsType.MACOS,
+			OsType.WEB,
+		],
+		{
+			message: "Only Android and iOS devices are supported",
+		},
+	),
 });
 
 export const registerUserBodySchema = zod.object({
@@ -45,9 +55,19 @@ export const registerUserBodySchema = zod.object({
 		.max(16, {
 			message: "Password should be at most 16 characters",
 		}),
-	role: zod.enum([Roles.ADMIN, Roles.USER], {
-		message: "Only user and admin roles are supported",
-	}),
+	role: zod.enum(
+		[
+			OsType.ANDROID,
+			OsType.IOS,
+			OsType.MACOS,
+			OsType.LINUX,
+			OsType.MACOS,
+			OsType.WEB,
+		],
+		{
+			message: "Only user and admin roles are supported",
+		},
+	),
 	deviceToken: zod
 		.string({
 			message: "Device token is required",
@@ -55,9 +75,19 @@ export const registerUserBodySchema = zod.object({
 		.min(1, {
 			message: "Device should be at least 1 character",
 		}),
-	deviceType: zod.enum([OsType.ANDROID, OsType.IOS], {
-		message: "Only Android and iOS devices are supported",
-	}),
+	deviceType: zod.enum(
+		[
+			OsType.ANDROID,
+			OsType.IOS,
+			OsType.MACOS,
+			OsType.LINUX,
+			OsType.MACOS,
+			OsType.WEB,
+		],
+		{
+			message: "Only Android and iOS devices are supported",
+		},
+	),
 });
 
 export const resendOTPBodySchema = zod.object({
@@ -88,9 +118,19 @@ export const forgetPasswordBodySchema = zod.object({
 	deviceToken: zod.string({
 		message: "Device token is required",
 	}),
-	deviceType: zod.enum([OsType.ANDROID, OsType.IOS], {
-		message: "Only Android and iOS devices are supported",
-	}),
+	deviceType: zod.enum(
+		[
+			OsType.ANDROID,
+			OsType.IOS,
+			OsType.MACOS,
+			OsType.LINUX,
+			OsType.MACOS,
+			OsType.WEB,
+		],
+		{
+			message: "Only Android and iOS devices are supported",
+		},
+	),
 });
 
 export const resetPasswordBodySchema = zod.object({
@@ -140,9 +180,19 @@ export const loginUserBodySchema = zod.object({
 		.min(1, {
 			message: "Device should be at least 1 character",
 		}),
-	deviceType: zod.enum([OsType.ANDROID, OsType.IOS], {
-		message: "Only Android and iOS devices are supported",
-	}),
+	deviceType: zod.enum(
+		[
+			OsType.ANDROID,
+			OsType.IOS,
+			OsType.MACOS,
+			OsType.LINUX,
+			OsType.MACOS,
+			OsType.WEB,
+		],
+		{
+			message: "Only Android and iOS devices are supported",
+		},
+	),
 });
 
 export const changePasswordBodySchema = zod.object({

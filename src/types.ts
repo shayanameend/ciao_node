@@ -20,6 +20,10 @@ export enum OtpType {
 export enum OsType {
 	ANDROID = "android",
 	IOS = "ios",
+	LINUX = "linux",
+	MACOS = "macos",
+	WINDOWS = "windows",
+	WEB = "web",
 }
 
 export enum Roles {
