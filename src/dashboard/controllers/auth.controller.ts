@@ -1,8 +1,8 @@
 import { db } from "../../db.js";
 import {
-	ResponseMessages,
 	type ExtendedRequest,
 	type ExtendedResponse,
+	ResponseMessages,
 } from "../../types.js";
 
 export async function getAllUsers(
