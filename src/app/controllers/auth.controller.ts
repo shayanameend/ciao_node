@@ -573,6 +573,33 @@ export async function login(req: ExtendedRequest, res: ExtendedResponse) {
 		);
 
 		if (!user.isVerified) {
+			const otpCode = generateOTP(8);
+
+			const otp = await db.otp.upsert({
+				where: {
+					userId: user.id,
+				},
+				create: {
+					code: otpCode,
+					type: OtpType.REGISTRATION,
+					user: {
+						connect: {
+							id: user.id,
+						},
+					},
+				},
+				update: {
+					code: otpCode,
+					isUsed: false,
+				},
+			});
+
+			await sendEmail({
+				name: "",
+				email: user.email,
+				body: generateBodyForOTP(otp.code),
+			});
+
 			return res.unauthorized?.({
 				data: {
 					user: {
