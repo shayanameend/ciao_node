@@ -1,5 +1,9 @@
 import { db } from "../../db.js";
-import type { ExtendedRequest, ExtendedResponse } from "../../types.js";
+import {
+	ResponseMessages,
+	type ExtendedRequest,
+	type ExtendedResponse,
+} from "../../types.js";
 
 export async function getAllUsers(
 	_req: ExtendedRequest,
@@ -27,7 +31,7 @@ export async function getAllUsers(
 
 		return res.success?.({
 			data: { users },
-			message: "Users fetched successfully",
+			message: ResponseMessages.USERS_FETCHED_SUCCESSFULLY,
 		});
 	} catch (error) {
 		console.error(error);
@@ -36,6 +40,8 @@ export async function getAllUsers(
 			return res.internalServerError?.({ message: error.message });
 		}
 
-		return res.internalServerError?.({ message: "Something went wrong" });
+		return res.internalServerError?.({
+			message: ResponseMessages.SOMETHING_WENT_WRONG,
+		});
 	}
 }

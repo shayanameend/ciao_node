@@ -6,6 +6,7 @@ import {
 	type ExtendedRequest,
 	type ExtendedResponse,
 	OtpType,
+	ResponseMessages,
 	TokenType,
 } from "../../types.js";
 import { sendEmail } from "../../utils/mail.js";
@@ -39,7 +40,9 @@ export async function register(req: ExtendedRequest, res: ExtendedResponse) {
 		});
 
 		if (existingUser) {
-			return res.badRequest?.({ message: "User already exists" });
+			return res.badRequest?.({
+				message: ResponseMessages.USER_ALREADY_EXISTS,
+			});
 		}
 
 		const hashedPassword = await argon.hash(password);
@@ -114,7 +117,7 @@ export async function register(req: ExtendedRequest, res: ExtendedResponse) {
 				},
 				token: jwtToken,
 			},
-			message: "User registered successfully",
+			message: ResponseMessages.USER_REGISTERED_SUCCESSFULLY,
 		});
 	} catch (error) {
 		console.error(error);
@@ -123,7 +126,9 @@ export async function register(req: ExtendedRequest, res: ExtendedResponse) {
 			return res.internalServerError?.({ message: error.message });
 		}
 
-		return res.internalServerError?.({ message: "Something went wrong" });
+		return res.internalServerError?.({
+			message: ResponseMessages.SOMETHING_WENT_WRONG,
+		});
 	}
 }
 
@@ -131,7 +136,7 @@ export async function resendOTP(req: ExtendedRequest, res: ExtendedResponse) {
 	try {
 		if (!req.user || req.user.tokenType !== TokenType.VERIFICATION) {
 			return res.unauthorized?.({
-				message: "Unauthorized",
+				message: ResponseMessages.UNAUTHORIZED,
 			});
 		}
 
@@ -153,7 +158,7 @@ export async function resendOTP(req: ExtendedRequest, res: ExtendedResponse) {
 
 			if (userAlreadyVerified) {
 				return res.badRequest?.({
-					message: "User already verified",
+					message: ResponseMessages.USER_ALREADY_VERIFIED,
 				});
 			}
 		}
@@ -186,7 +191,7 @@ export async function resendOTP(req: ExtendedRequest, res: ExtendedResponse) {
 		});
 
 		return res.success?.({
-			message: "OTP sent successfully",
+			message: ResponseMessages.OTP_SENT_SUCCESSFULLY,
 		});
 	} catch (error) {
 		console.error(error);
@@ -195,7 +200,9 @@ export async function resendOTP(req: ExtendedRequest, res: ExtendedResponse) {
 			return res.internalServerError?.({ message: error.message });
 		}
 
-		return res.internalServerError?.({ message: "Something went wrong" });
+		return res.internalServerError?.({
+			message: ResponseMessages.SOMETHING_WENT_WRONG,
+		});
 	}
 }
 
@@ -203,7 +210,7 @@ export async function verifyOTP(req: ExtendedRequest, res: ExtendedResponse) {
 	try {
 		if (!req.user || req.user.tokenType !== TokenType.VERIFICATION) {
 			return res.unauthorized?.({
-				message: "Unauthorized",
+				message: ResponseMessages.UNAUTHORIZED,
 			});
 		}
 
@@ -225,7 +232,7 @@ export async function verifyOTP(req: ExtendedRequest, res: ExtendedResponse) {
 
 			if (userAlreadyVerified) {
 				return res.badRequest?.({
-					message: "User already verified",
+					message: ResponseMessages.USER_ALREADY_VERIFIED,
 				});
 			}
 		}
@@ -242,18 +249,18 @@ export async function verifyOTP(req: ExtendedRequest, res: ExtendedResponse) {
 		});
 
 		if (!otp) {
-			return res.notFound?.({ message: "Invalid OTP" });
+			return res.notFound?.({ message: ResponseMessages.INVALID_OTP });
 		}
 
 		if (otp.isUsed) {
-			return res.badRequest?.({ message: "OTP already used" });
+			return res.badRequest?.({ message: ResponseMessages.OTP_ALREADY_USED });
 		}
 
 		const isOTPExpired =
 			new Date().getTime() - otp.updatedAt.getTime() > 5 * 60 * 1000; // 5 minutes
 
 		if (isOTPExpired) {
-			return res.badRequest?.({ message: "OTP expired" });
+			return res.badRequest?.({ message: ResponseMessages.OTP_EXPIRED });
 		}
 
 		await db.otp.update({
@@ -275,7 +282,7 @@ export async function verifyOTP(req: ExtendedRequest, res: ExtendedResponse) {
 		});
 
 		return res.success?.({
-			message: "OTP verified successfully",
+			message: ResponseMessages.OTP_VERIFIED_SUCCESSFULLY,
 		});
 	} catch (error) {
 		console.error(error);
@@ -284,7 +291,9 @@ export async function verifyOTP(req: ExtendedRequest, res: ExtendedResponse) {
 			return res.internalServerError?.({ message: error.message });
 		}
 
-		return res.internalServerError?.({ message: "Something went wrong" });
+		return res.internalServerError?.({
+			message: ResponseMessages.SOMETHING_WENT_WRONG,
+		});
 	}
 }
 
@@ -308,7 +317,7 @@ export async function requestForgetPassword(
 
 	if (!user) {
 		return res.badRequest?.({
-			message: "User not found",
+			message: ResponseMessages.USER_NOT_FOUND,
 		});
 	}
 
@@ -355,7 +364,7 @@ export async function requestForgetPassword(
 			},
 			token: jwtToken,
 		},
-		message: "Forget Password requested successfully",
+		message: ResponseMessages.FORGET_PASSWORD_REQUESTED_SUCCESSFULLY,
 	});
 }
 
@@ -366,7 +375,7 @@ export async function resetPassword(
 	try {
 		if (!req.user || req.user.tokenType !== TokenType.FORGET_PASSWORD) {
 			return res.unauthorized?.({
-				message: "Unauthorized",
+				message: ResponseMessages.UNAUTHORIZED,
 			});
 		}
 
@@ -378,7 +387,7 @@ export async function resetPassword(
 
 		if (!user) {
 			return res.unauthorized?.({
-				message: "User not found",
+				message: ResponseMessages.USER_NOT_FOUND,
 			});
 		}
 
@@ -420,7 +429,7 @@ export async function resetPassword(
 				},
 				token: jwtToken,
 			},
-			message: "Password reseted successfully",
+			message: ResponseMessages.PASSWORD_RESETED_SUCCESSFULLY,
 		});
 	} catch (error) {
 		console.error(error);
@@ -429,7 +438,9 @@ export async function resetPassword(
 			return res.internalServerError?.({ message: error.message });
 		}
 
-		return res.internalServerError?.({ message: "Something went wrong" });
+		return res.internalServerError?.({
+			message: ResponseMessages.SOMETHING_WENT_WRONG,
+		});
 	}
 }
 
@@ -440,7 +451,7 @@ export async function createProfile(
 	try {
 		if (!req.user || req.user.tokenType !== TokenType.VERIFICATION) {
 			return res.unauthorized?.({
-				message: "Unauthorized",
+				message: ResponseMessages.UNAUTHORIZED,
 			});
 		}
 
@@ -452,13 +463,13 @@ export async function createProfile(
 
 		if (!user) {
 			return res.unauthorized?.({
-				message: "User not found",
+				message: ResponseMessages.USER_NOT_FOUND,
 			});
 		}
 
 		if (!user?.isVerified) {
 			return res.unauthorized?.({
-				message: "User not verified",
+				message: ResponseMessages.USER_NOT_VERIFIED,
 			});
 		}
 
@@ -469,13 +480,17 @@ export async function createProfile(
 		});
 
 		if (existingProfile) {
-			return res.badRequest?.({ message: "Profile already exists" });
+			return res.badRequest?.({
+				message: ResponseMessages.PROFILE_ALREADY_EXISTS,
+			});
 		}
 
 		const parsedBody = createProfileBodySchema.safeParse(req.body);
 
 		if (!parsedBody.success) {
-			return res.badRequest?.({ message: parsedBody.error.errors[0].message });
+			return res.badRequest?.({
+				message: parsedBody.error.errors[0].message,
+			});
 		}
 
 		const { fullName, dob } = parsedBody.data;
@@ -496,7 +511,7 @@ export async function createProfile(
 			data: {
 				profile,
 			},
-			message: "Profile created successfully",
+			message: ResponseMessages.PROFILE_CREATED_SUCCESSFULLY,
 		});
 	} catch (error) {
 		console.error(error);
@@ -505,7 +520,9 @@ export async function createProfile(
 			return res.internalServerError?.({ message: error.message });
 		}
 
-		return res.internalServerError?.({ message: "Something went wrong" });
+		return res.internalServerError?.({
+			message: ResponseMessages.SOMETHING_WENT_WRONG,
+		});
 	}
 }
 
@@ -529,13 +546,15 @@ export async function login(req: ExtendedRequest, res: ExtendedResponse) {
 		});
 
 		if (!user) {
-			return res.notFound?.({ message: "User not found" });
+			return res.notFound?.({ message: ResponseMessages.USER_NOT_FOUND });
 		}
 
 		const isPasswordValid = await argon.verify(user.password, password);
 
 		if (!isPasswordValid) {
-			return res.unauthorized?.({ message: "Invalid password" });
+			return res.unauthorized?.({
+				message: ResponseMessages.INVALID_PASSWORD,
+			});
 		}
 
 		const device = await db.device.upsert({
@@ -608,7 +627,7 @@ export async function login(req: ExtendedRequest, res: ExtendedResponse) {
 					},
 					token: jwtToken,
 				},
-				message: "User not verified",
+				message: ResponseMessages.USER_NOT_VERIFIED,
 			});
 		}
 
@@ -621,7 +640,7 @@ export async function login(req: ExtendedRequest, res: ExtendedResponse) {
 					},
 					token: jwtToken,
 				},
-				message: "Profile not found",
+				message: ResponseMessages.PROFILE_NOT_FOUND,
 			});
 		}
 
@@ -633,7 +652,7 @@ export async function login(req: ExtendedRequest, res: ExtendedResponse) {
 				},
 				token: jwtToken,
 			},
-			message: "User logged in successfully",
+			message: ResponseMessages.USER_LOGGED_IN_SUCCESSFULLY,
 		});
 	} catch (error) {
 		console.error(error);
@@ -642,7 +661,9 @@ export async function login(req: ExtendedRequest, res: ExtendedResponse) {
 			return res.internalServerError?.({ message: error.message });
 		}
 
-		return res.internalServerError?.({ message: "Something went wrong" });
+		return res.internalServerError?.({
+			message: ResponseMessages.SOMETHING_WENT_WRONG,
+		});
 	}
 }
 
@@ -663,7 +684,7 @@ export async function logout(req: ExtendedRequest, res: ExtendedResponse) {
 		});
 
 		if (!device) {
-			return res.notFound?.({ message: "Device not found" });
+			return res.notFound?.({ message: ResponseMessages.DEVICE_NOT_FOUND });
 		}
 
 		await db.device.update({
@@ -676,7 +697,7 @@ export async function logout(req: ExtendedRequest, res: ExtendedResponse) {
 		});
 
 		return res.success?.({
-			message: "User logged out successfully",
+			message: ResponseMessages.USER_LOGGED_OUT_SUCCESSFULLY,
 		});
 	} catch (error) {
 		console.error(error);
@@ -685,7 +706,9 @@ export async function logout(req: ExtendedRequest, res: ExtendedResponse) {
 			return res.internalServerError?.({ message: error.message });
 		}
 
-		return res.internalServerError?.({ message: "Something went wrong" });
+		return res.internalServerError?.({
+			message: ResponseMessages.SOMETHING_WENT_WRONG,
+		});
 	}
 }
 
@@ -696,7 +719,7 @@ export async function changePassword(
 	try {
 		if (!req.user || req.user.tokenType !== TokenType.VERIFICATION) {
 			return res.unauthorized?.({
-				message: "Unauthorized",
+				message: ResponseMessages.UNAUTHORIZED,
 			});
 		}
 
@@ -719,18 +742,18 @@ export async function changePassword(
 
 		if (!user?.isVerified) {
 			return res.unauthorized?.({
-				message: "User not verified",
+				message: ResponseMessages.USER_NOT_VERIFIED,
 			});
 		}
 
 		if (!user?.profile) {
-			return res.badRequest?.({ message: "Profile does not exist" });
+			return res.badRequest?.({ message: ResponseMessages.PROFILE_NOT_FOUND });
 		}
 
 		const isPasswordValid = await argon.verify(user.password, oldPassword);
 
 		if (!isPasswordValid) {
-			return res.unauthorized?.({ message: "Invalid old password" });
+			return res.unauthorized?.({ message: ResponseMessages.INVALID_PASSWORD });
 		}
 
 		const hashedPassword = await argon.hash(newPassword);
@@ -745,7 +768,7 @@ export async function changePassword(
 		});
 
 		return res.created?.({
-			message: "Password changed successfully",
+			message: ResponseMessages.PASSWORD_CHANGED_SUCCESSFULLY,
 		});
 	} catch (error) {
 		console.error(error);
@@ -754,6 +777,8 @@ export async function changePassword(
 			return res.internalServerError?.({ message: error.message });
 		}
 
-		return res.internalServerError?.({ message: "Something went wrong" });
+		return res.internalServerError?.({
+			message: ResponseMessages.SOMETHING_WENT_WRONG,
+		});
 	}
 }
