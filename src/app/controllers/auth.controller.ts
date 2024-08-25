@@ -538,14 +538,6 @@ export async function login(req: ExtendedRequest, res: ExtendedResponse) {
 			return res.unauthorized?.({ message: "Invalid password" });
 		}
 
-		if (!user.isVerified) {
-			return res.unauthorized?.({ message: "User not verified" });
-		}
-
-		if (!user.profile) {
-			return res.unauthorized?.({ message: "Profile not found" });
-		}
-
 		const device = await db.device.upsert({
 			where: {
 				token: deviceToken,
@@ -579,6 +571,32 @@ export async function login(req: ExtendedRequest, res: ExtendedResponse) {
 			},
 			env.JWT_SECRET,
 		);
+
+		if (!user.isVerified) {
+			return res.unauthorized?.({
+				data: {
+					user: {
+						id: user.id,
+						email: user.email,
+					},
+					token: jwtToken,
+				},
+				message: "User not verified",
+			});
+		}
+
+		if (!user.profile) {
+			return res.unauthorized?.({
+				data: {
+					user: {
+						id: user.id,
+						email: user.email,
+					},
+					token: jwtToken,
+				},
+				message: "Profile not found",
+			});
+		}
 
 		return res.success?.({
 			data: {
