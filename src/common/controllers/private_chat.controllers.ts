@@ -208,7 +208,7 @@ export async function joinPrivateChatRoom(
 
 		socket.join(room.id);
 
-		console.log(chalk.cyan(`User Joined Room: ${user.id}`));
+		console.log(chalk.cyan(`User ${user.id} Joined Room ${room.id}`));
 
 		if (callback) {
 			return callback({
@@ -216,7 +216,7 @@ export async function joinPrivateChatRoom(
 			});
 		}
 	} catch (error) {
-		console.log(chalk.red(`Error Joining Room: ${user.id}`));
+		console.log(chalk.red(`User ${user.id} Errored Joining Room`));
 		console.error(error);
 
 		if (callback) {
@@ -271,9 +271,15 @@ export async function readPrivateChatRoomMessages(
 			messages,
 		});
 
-		console.log(chalk.cyan(`Messages Read: ${messages.count} in ${roomId}`));
+		console.log(
+			chalk.cyan(
+				`User ${user.id} Read ${messages.count} Messages in Room ${roomId}`,
+			),
+		);
 	} catch (error) {
-		console.log(chalk.red(`Error Reading Messages: ${user.id}`));
+		console.log(
+			chalk.red(`User ${user.id} Errored Reading Messages in Room ${roomId}`),
+		);
 		console.error(error);
 
 		if (error instanceof Error) {
@@ -328,10 +334,14 @@ export async function deletePrivateChatRoomMessages(
 		await db.$transaction(messagesUpdates);
 
 		console.log(
-			chalk.cyan(`Messages Deleted: ${messages.length} in ${roomId}`),
+			chalk.cyan(
+				`User ${user.id} Deleted ${messages.length} Messages in Room ${roomId}`,
+			),
 		);
 	} catch (error) {
-		console.log(chalk.red(`Error Deleting Messages: ${user.id}`));
+		console.log(
+			chalk.red(`User ${user.id} Errored Deleting Messages in Room ${roomId}`),
+		);
 		console.error(error);
 
 		if (error instanceof Error) {
@@ -397,7 +407,11 @@ export async function sendPrivateChatRoomMessage(
 			message,
 		});
 
-		console.log(chalk.cyan(`Message Sent: ${message.id} in ${roomId}`));
+		console.log(
+			chalk.cyan(
+				`User ${user.id} Sent Message ${message.id} in Room ${roomId}`,
+			),
+		);
 
 		const room = await db.room.findUnique({
 			where: { id: roomId },
@@ -444,10 +458,14 @@ export async function sendPrivateChatRoomMessage(
 				privateChats,
 			});
 
-			console.log(chalk.cyan(`Private Chats Updated for ${member.id}`));
+			console.log(
+				chalk.cyan(`User ${user.id} Updated Private Chats for ${member.id}`),
+			);
 		}
 	} catch (error) {
-		console.log(chalk.red(`Error Sending Message: ${user.id}`));
+		console.log(
+			chalk.red(`User ${user.id} Errored Sending Message in Room ${roomId}`),
+		);
 		console.error(error);
 
 		if (error instanceof Error) {
@@ -510,11 +528,13 @@ export async function readPrivateChatRoomMessage(
 
 		console.log(
 			chalk.cyan(
-				`Message Read: ${updatedMessage.id} in ${updatedMessage.room.id}`,
+				`User ${user.id} Read Message ${updatedMessage.id} in Room ${updatedMessage.room.id}`,
 			),
 		);
 	} catch (error) {
-		console.log(chalk.red(`Error Reading Message: ${user.id}`));
+		console.log(
+			chalk.red(`User ${user.id} Errored Reading Message: ${messageId}`),
+		);
 		console.error(error);
 
 		if (error instanceof Error) {
@@ -579,7 +599,7 @@ export async function editPrivateChatRoomMessage(
 
 		console.log(
 			chalk.cyan(
-				`Message Edited: ${updatedMessage.id} in ${updatedMessage.room.id}`,
+				`User ${user.id} Edited Message ${updatedMessage.id} in Room ${updatedMessage.room.id}`,
 			),
 		);
 
@@ -628,10 +648,14 @@ export async function editPrivateChatRoomMessage(
 				privateChats,
 			});
 
-			console.log(chalk.cyan(`Private Chats Updated for ${member.id}`));
+			console.log(
+				chalk.cyan(`User ${user.id} Updated Private Chats for ${member.id}`),
+			);
 		}
 	} catch (error) {
-		console.log(chalk.red(`Error Editing Message: ${user.id}`));
+		console.log(
+			chalk.red(`User ${user.id} Errored Editing Message ${messageId}`),
+		);
 		console.error(error);
 
 		if (error instanceof Error) {
@@ -673,9 +697,11 @@ export async function deletePrivateChatRoomMessage(
 			},
 		});
 
-		console.log(chalk.cyan(`Message Deleted: ${messageId}`));
+		console.log(chalk.cyan(`User ${user.id} Deleted Message ${messageId}`));
 	} catch (error) {
-		console.log(chalk.red(`Error Deleting Message: ${user.id}`));
+		console.log(
+			chalk.red(`User ${user.id} Errored Deleting Message ${messageId}`),
+		);
 		console.error(error);
 
 		if (error instanceof Error) {
@@ -696,7 +722,7 @@ export async function leavePrivateChatRoom(
 ) {
 	socket.leave(roomId);
 
-	console.log(chalk.cyan(`User Left Room: ${user.id}`));
+	console.log(chalk.cyan(`User ${user.id} Left Room ${roomId}`));
 }
 
 export async function archivePrivateChatRoom(
@@ -729,9 +755,9 @@ export async function archivePrivateChatRoom(
 			},
 		});
 
-		console.log(chalk.cyan(`Room Archived: ${roomId} by ${user.id}`));
+		console.log(chalk.cyan(`User ${user.id} Archived Room ${roomId}`));
 	} catch (error) {
-		console.log(chalk.red(`Error Archiving Room: ${user.id}`));
+		console.log(chalk.red(`User ${user.id} Errored Archiving Room ${roomId}`));
 		console.error(error);
 
 		if (error instanceof Error) {
@@ -777,9 +803,9 @@ export async function deletePrivateChatRoom(
 			},
 		});
 
-		console.log(chalk.cyan(`Room Deleted: ${roomId} by ${user.id}`));
+		console.log(chalk.cyan(`User ${user.id} Deleted Room ${roomId}`));
 	} catch (error) {
-		console.log(chalk.red(`Error Deleting Room: ${user.id}`));
+		console.log(chalk.red(`User ${user.id} Errored Deleting Room ${roomId}`));
 		console.error(error);
 
 		if (error instanceof Error) {
