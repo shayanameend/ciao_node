@@ -2,7 +2,7 @@ import { default as chalk } from "chalk";
 import { db } from "../../db.js";
 import { default as events } from "../../events.js";
 import type { SocketParams } from "../../types.js";
-import type { ChatRoomResponse } from "../../validators/private_chat.validators.js";
+import type { ChatRoomResponse } from "../../validators/chat.validators.js";
 
 interface CreateChatRoomParams {
 	otherUserId: string;
