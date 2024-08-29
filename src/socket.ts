@@ -1,6 +1,5 @@
 import { default as chalk } from "chalk";
 import type { Socket, Server as SocketServer } from "socket.io";
-import { useGroupChatEvents } from "./common/events/group_chat.events.js";
 import { usePrivateChatEvents } from "./common/events/private_chat.events.js";
 import { useRecentChatsEvents } from "./common/events/recent_chats.events.js";
 import { default as events } from "./events.js";
@@ -18,7 +17,6 @@ export function useSocketIO(io: SocketServer, socket: Socket) {
 
 	useRecentChatsEvents(io, socket, user.data);
 	usePrivateChatEvents(io, socket, user.data);
-	useGroupChatEvents(io, socket, user.data);
 
 	socket.on(events.socket.disconnect, () => {
 		console.log(chalk.cyan(`User Disconnected: ${socket.id}`));

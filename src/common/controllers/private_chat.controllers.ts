@@ -2,10 +2,14 @@ import { default as chalk } from "chalk";
 import { db } from "../../db.js";
 import { default as events } from "../../events.js";
 import type { SocketParams } from "../../types.js";
-import type { ChatRoomJoinResponse } from "../../validators/private_chat.validators.js";
+import type { ChatRoomResponse } from "../../validators/private_chat.validators.js";
+
+interface CreateChatRoomParams {
+	otherUserId: string;
+}
 
 interface JoinChatRoomParams {
-	otherUserId: string;
+	roomId: string;
 }
 
 interface ReadChatRoomMessagesParams {
@@ -46,19 +50,19 @@ interface DeleteChatRoomMessageParams {
 	messageId: string;
 }
 
-export async function joinPrivateChatRoom(
-	{ io: _io, socket, user }: SocketParams,
-	{ otherUserId }: JoinChatRoomParams,
+export async function createPrivateChatRoom(
+	{ io, socket, user }: SocketParams,
+	{ otherUserId }: CreateChatRoomParams,
 	callback?: ({
 		error,
 		data,
 	}: {
 		error?: unknown;
-		data: ChatRoomJoinResponse;
+		data: ChatRoomResponse;
 	}) => void,
 ) {
 	try {
-		const profile1 = await db.profile.findFirst({
+		const profile = await db.profile.findFirst({
 			where: {
 				userId: user.id,
 			},
@@ -67,27 +71,14 @@ export async function joinPrivateChatRoom(
 			},
 		});
 
-		const profile2 = await db.profile.findFirst({
-			where: {
-				userId: otherUserId,
-			},
-			select: {
-				id: true,
-			},
-		});
-
-		if (!profile1 || !profile2) {
+		if (!profile) {
 			throw new Error("Profile not found");
 		}
 
-		let room = await db.room.findFirst({
-			where: {
+		const room = await db.room.create({
+			data: {
 				members: {
-					every: {
-						id: {
-							in: [profile1.id, profile2.id],
-						},
-					},
+					connect: [{ id: profile.id }, { id: otherUserId }],
 				},
 			},
 			select: {
@@ -98,14 +89,95 @@ export async function joinPrivateChatRoom(
 						fullName: true,
 					},
 				},
-				group: {
+				messages: {
 					select: {
 						id: true,
-						name: true,
-						isAdminOnly: true,
-						admin: {
+						text: true,
+						isRead: true,
+						readTime: true,
+						isEdited: true,
+						editTime: true,
+						deletedBy: {
+							select: {
+								id: true,
+								fullName: true,
+							},
+						},
+						profile: {
 							select: { id: true, fullName: true },
 						},
+					},
+				},
+			},
+		});
+
+		socket.join(room.id);
+
+		console.log(chalk.cyan(`User Created Room: ${user.id}`));
+
+		if (callback) {
+			return callback({
+				data: { room },
+			});
+		}
+	} catch (error) {
+		console.log(chalk.red(`Error Creating Room: ${user.id}`));
+		console.error(error);
+
+		if (callback) {
+			callback({
+				error,
+				data: { room: null },
+			});
+		}
+
+		if (error instanceof Error) {
+			return socket.emit(events.socket.error, {
+				message: error.message,
+			});
+		}
+
+		return socket.emit(events.socket.error, {
+			message: "Error creating room",
+		});
+	}
+}
+
+export async function joinPrivateChatRoom(
+	{ io: _io, socket, user }: SocketParams,
+	{ roomId }: JoinChatRoomParams,
+	callback?: ({
+		error,
+		data,
+	}: {
+		error?: unknown;
+		data: ChatRoomResponse;
+	}) => void,
+) {
+	try {
+		const profile = await db.profile.findFirst({
+			where: {
+				userId: user.id,
+			},
+			select: {
+				id: true,
+			},
+		});
+
+		if (!profile) {
+			throw new Error("Profile not found");
+		}
+
+		const room = await db.room.findFirst({
+			where: {
+				id: roomId,
+			},
+			select: {
+				id: true,
+				members: {
+					select: {
+						id: true,
+						fullName: true,
 					},
 				},
 				messages: {
@@ -131,51 +203,7 @@ export async function joinPrivateChatRoom(
 		});
 
 		if (!room) {
-			room = await db.room.create({
-				data: {
-					members: {
-						connect: [{ id: profile1.id }, { id: profile2.id }],
-					},
-				},
-				select: {
-					id: true,
-					members: {
-						select: {
-							id: true,
-							fullName: true,
-						},
-					},
-					group: {
-						select: {
-							id: true,
-							name: true,
-							isAdminOnly: true,
-							admin: {
-								select: { id: true, fullName: true },
-							},
-						},
-					},
-					messages: {
-						select: {
-							id: true,
-							text: true,
-							isRead: true,
-							readTime: true,
-							isEdited: true,
-							editTime: true,
-							deletedBy: {
-								select: {
-									id: true,
-									fullName: true,
-								},
-							},
-							profile: {
-								select: { id: true, fullName: true },
-							},
-						},
-					},
-				},
-			});
+			throw new Error("Room not found");
 		}
 
 		socket.join(room.id);
