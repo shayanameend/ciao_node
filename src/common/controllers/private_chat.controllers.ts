@@ -50,8 +50,10 @@ export async function joinPrivateChatRoom(
 	{ io: _io, socket, user }: SocketParams,
 	{ otherUserId }: JoinChatRoomParams,
 	callback?: ({
+		error,
 		data,
 	}: {
+		error?: unknown;
 		data: ChatRoomJoinResponse;
 	}) => void,
 ) {
@@ -188,6 +190,13 @@ export async function joinPrivateChatRoom(
 	} catch (error) {
 		console.log(chalk.red(`Error Joining Room: ${user.id}`));
 		console.error(error);
+
+		if (callback) {
+			callback({
+				error,
+				data: { room: null },
+			});
+		}
 
 		if (error instanceof Error) {
 			return socket.emit(events.socket.error, {
