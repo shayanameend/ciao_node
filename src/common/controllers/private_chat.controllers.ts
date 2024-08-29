@@ -51,7 +51,7 @@ interface DeleteChatRoomMessageParams {
 }
 
 export async function createPrivateChatRoom(
-	{ io, socket, user }: SocketParams,
+	{ socket, user }: SocketParams,
 	{ otherUserId }: CreateChatRoomParams,
 	callback?: ({
 		error,
@@ -144,7 +144,7 @@ export async function createPrivateChatRoom(
 }
 
 export async function joinPrivateChatRoom(
-	{ io: _io, socket, user }: SocketParams,
+	{ socket, user }: SocketParams,
 	{ roomId }: JoinChatRoomParams,
 	callback?: ({
 		error,
@@ -289,7 +289,7 @@ export async function readPrivateChatRoomMessages(
 }
 
 export async function deletePrivateChatRoomMessages(
-	{ io: _io, socket, user }: SocketParams,
+	{ socket, user }: SocketParams,
 	{ roomId }: DeleteChatRoomMessagesParams,
 ) {
 	try {
@@ -647,7 +647,7 @@ export async function editPrivateChatRoomMessage(
 }
 
 export async function deletePrivateChatRoomMessage(
-	{ io: _io, socket, user }: SocketParams,
+	{ socket, user }: SocketParams,
 	{ messageId }: DeleteChatRoomMessageParams,
 ) {
 	try {
@@ -691,7 +691,7 @@ export async function deletePrivateChatRoomMessage(
 }
 
 export async function leavePrivateChatRoom(
-	{ io: _io, socket, user }: SocketParams,
+	{ socket, user }: SocketParams,
 	{ roomId }: LeaveChatRoomParams,
 ) {
 	socket.leave(roomId);
@@ -700,7 +700,7 @@ export async function leavePrivateChatRoom(
 }
 
 export async function archivePrivateChatRoom(
-	{ io: _io, socket, user }: SocketParams,
+	{ socket, user }: SocketParams,
 	{ roomId }: ArchiveChatRoomParams,
 ) {
 	try {
@@ -747,7 +747,7 @@ export async function archivePrivateChatRoom(
 }
 
 export async function deletePrivateChatRoom(
-	{ io: _io, socket, user }: SocketParams,
+	{ socket, user }: SocketParams,
 	{ roomId }: DeleteChatRoomParams,
 ) {
 	try {
