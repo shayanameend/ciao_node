@@ -113,7 +113,7 @@ export async function createPrivateChatRoom(
 
 		socket.join(room.id);
 
-		console.log(chalk.cyan(`User Created Room: ${user.id}`));
+		console.log(chalk.cyan(`User ${user.id} Created Room ${room.id}`));
 
 		if (callback) {
 			return callback({
@@ -121,7 +121,7 @@ export async function createPrivateChatRoom(
 			});
 		}
 	} catch (error) {
-		console.log(chalk.red(`Error Creating Room: ${user.id}`));
+		console.log(chalk.red(`User ${user.id} Errored Creating Room`));
 		console.error(error);
 
 		if (callback) {
