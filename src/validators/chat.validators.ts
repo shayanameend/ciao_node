@@ -49,7 +49,7 @@ export const RecentChatsResponseSchema = zod.object({
 	),
 });
 
-export const ChatRoomResponseSchema = zod.object({
+export const PrivateChatRoomResponseSchema = zod.object({
 	room: zod
 		.object({
 			id: zod.string(),
@@ -63,4 +63,6 @@ export type Profile = zod.infer<typeof ProfileSchema>;
 export type Message = zod.infer<typeof MessageSchema>;
 export type Group = zod.infer<typeof GroupSchema>;
 export type RecentChatsResponse = zod.infer<typeof RecentChatsResponseSchema>;
-export type ChatRoomResponse = zod.infer<typeof ChatRoomResponseSchema>;
+export type PrivateChatRoomResponse = zod.infer<
+	typeof PrivateChatRoomResponseSchema
+>;
