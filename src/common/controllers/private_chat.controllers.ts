@@ -57,7 +57,7 @@ export async function createPrivateChatRoom(
 		error,
 		data,
 	}: {
-		error?: unknown;
+		error?: string;
 		data: PrivateChatRoomResponse;
 	}) => void,
 ) {
@@ -124,16 +124,23 @@ export async function createPrivateChatRoom(
 		console.log(chalk.red(`User ${user.id} Errored Creating Room`));
 		console.error(error);
 
-		if (callback) {
-			callback({
-				error,
-				data: { room: null },
+		if (error instanceof Error) {
+			if (callback) {
+				callback({
+					error: error.message,
+					data: { room: null },
+				});
+			}
+
+			return socket.emit(events.socket.error, {
+				message: error.message,
 			});
 		}
 
-		if (error instanceof Error) {
-			return socket.emit(events.socket.error, {
-				message: error.message,
+		if (callback) {
+			callback({
+				error: "Error creating room",
+				data: { room: null },
 			});
 		}
 
@@ -150,7 +157,7 @@ export async function joinPrivateChatRoom(
 		error,
 		data,
 	}: {
-		error?: unknown;
+		error?: string;
 		data: PrivateChatRoomResponse;
 	}) => void,
 ) {
@@ -219,16 +226,22 @@ export async function joinPrivateChatRoom(
 		console.log(chalk.red(`User ${user.id} Errored Joining Room`));
 		console.error(error);
 
-		if (callback) {
-			callback({
-				error,
-				data: { room: null },
+		if (error instanceof Error) {
+			if (callback) {
+				callback({
+					error: error.message,
+					data: { room: null },
+				});
+			}
+			return socket.emit(events.socket.error, {
+				message: error.message,
 			});
 		}
 
-		if (error instanceof Error) {
-			return socket.emit(events.socket.error, {
-				message: error.message,
+		if (callback) {
+			callback({
+				error: "Error joining room",
+				data: { room: null },
 			});
 		}
 
