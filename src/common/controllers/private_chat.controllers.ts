@@ -62,7 +62,7 @@ export async function createPrivateChatRoom(
 	}) => void,
 ) {
 	try {
-		const profile = await db.profile.findFirst({
+		const profile = await db.profile.findUnique({
 			where: {
 				userId: user.id,
 			},
@@ -155,7 +155,7 @@ export async function joinPrivateChatRoom(
 	}) => void,
 ) {
 	try {
-		const profile = await db.profile.findFirst({
+		const profile = await db.profile.findUnique({
 			where: {
 				userId: user.id,
 			},

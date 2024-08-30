@@ -3,6 +3,7 @@ import { default as events } from "../../events.js";
 import type { JWTUserType } from "../../validators/auth.validators.js";
 import {
 	archivePrivateChatRoom,
+	createPrivateChatRoom,
 	deletePrivateChatRoom,
 	deletePrivateChatRoomMessage,
 	deletePrivateChatRoomMessages,
@@ -19,6 +20,10 @@ export function usePrivateChatEvents(
 	socket: Socket,
 	user: JWTUserType,
 ) {
+	socket.on(events.privateChat.room.create, ({ otherUserId }, callback) => {
+		createPrivateChatRoom({ io, socket, user }, { otherUserId }, callback);
+	});
+
 	socket.on(events.privateChat.room.join, ({ roomId }, callback) => {
 		joinPrivateChatRoom({ io, socket, user }, { roomId }, callback);
 	});
