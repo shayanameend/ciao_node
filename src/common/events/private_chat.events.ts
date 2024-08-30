@@ -19,8 +19,8 @@ export function usePrivateChatEvents(
 	socket: Socket,
 	user: JWTUserType,
 ) {
-	socket.on(events.privateChat.room.join, ({ otherUserId }, callback) => {
-		joinPrivateChatRoom({ io, socket, user }, { otherUserId }, callback);
+	socket.on(events.privateChat.room.join, ({ roomId }, callback) => {
+		joinPrivateChatRoom({ io, socket, user }, { roomId }, callback);
 	});
 
 	socket.on(events.privateChat.messages.read, ({ roomId }) => {
