@@ -52,6 +52,16 @@ export async function joinRecentChatsRoom({ io, socket, user }: SocketParams) {
 					select: {
 						id: true,
 						text: true,
+						isRead: true,
+						readTime: true,
+						isEdited: true,
+						editTime: true,
+						deletedBy: {
+							select: {
+								id: true,
+								fullName: true,
+							},
+						},
 						profile: {
 							select: { id: true, fullName: true },
 						},
@@ -97,6 +107,16 @@ export async function joinRecentChatsRoom({ io, socket, user }: SocketParams) {
 					select: {
 						id: true,
 						text: true,
+						isRead: true,
+						readTime: true,
+						isEdited: true,
+						editTime: true,
+						deletedBy: {
+							select: {
+								id: true,
+								fullName: true,
+							},
+						},
 						profile: {
 							select: { id: true, fullName: true },
 						},
