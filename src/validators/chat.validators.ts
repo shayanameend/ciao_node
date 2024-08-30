@@ -8,6 +8,11 @@ export const ProfileSchema = zod.object({
 export const MessageSchema = zod.object({
 	id: zod.string(),
 	text: zod.string(),
+	isRead: zod.boolean(),
+	readTime: zod.date().nullable(),
+	isEdited: zod.boolean(),
+	editTime: zod.date().nullable(),
+	deletedBy: zod.array(ProfileSchema),
 	profile: ProfileSchema,
 });
 
@@ -36,24 +41,22 @@ export const RecentChatsResponseSchema = zod.object({
 			id: zod.string(),
 			members: zod.array(ProfileSchema),
 			messages: zod.array(MessageSchema),
-			group: zod.nullable(
-				GroupSchema.omit({
-					isAdminOnly: true,
-					admin: true,
-				}),
-			),
+			group: GroupSchema.omit({
+				isAdminOnly: true,
+				admin: true,
+			}).nullable(),
 		}),
 	),
 });
 
 export const ChatRoomResponseSchema = zod.object({
-	room: zod.nullable(
-		zod.object({
+	room: zod
+		.object({
 			id: zod.string(),
 			members: zod.array(ProfileSchema),
 			messages: zod.array(MessageSchema),
-		}),
-	),
+		})
+		.nullable(),
 });
 
 export type Profile = zod.infer<typeof ProfileSchema>;
