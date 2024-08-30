@@ -2,7 +2,7 @@ import { default as chalk } from "chalk";
 import { db } from "../../db.js";
 import { default as events } from "../../events.js";
 import type { SocketParams } from "../../types.js";
-import type { ChatRoomResponse } from "../../validators/chat.validators.js";
+import type { PrivateChatRoomResponse } from "../../validators/chat.validators.js";
 
 interface CreateChatRoomParams {
 	otherUserId: string;
@@ -58,7 +58,7 @@ export async function createPrivateChatRoom(
 		data,
 	}: {
 		error?: unknown;
-		data: ChatRoomResponse;
+		data: PrivateChatRoomResponse;
 	}) => void,
 ) {
 	try {
@@ -151,7 +151,7 @@ export async function joinPrivateChatRoom(
 		data,
 	}: {
 		error?: unknown;
-		data: ChatRoomResponse;
+		data: PrivateChatRoomResponse;
 	}) => void,
 ) {
 	try {

@@ -54,7 +54,13 @@ app.use(appRouter);
 console.log(chalk.blue("Setting Up Socket IO"));
 export const io: SocketServer = new SocketServer(httpServer, {
 	cors: {
-		origin: "*",
+		origin: [
+			"http://localhost:3000",
+			"http://192.168.100.85:3000",
+			"http://192.168.100.86:3000",
+		],
+		methods: ["GET", "POST"],
+		credentials: true,
 	},
 });
 
