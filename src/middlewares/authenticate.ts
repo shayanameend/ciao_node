@@ -13,6 +13,7 @@ export function authenticateHttp(role: "user" | "admin" = "user") {
 		next: NextFunction,
 	) => {
 		const authorization = req.headers.authorization;
+
 		if (!authorization) {
 			return res.unauthorized?.({
 				message: "Authorization header is required",
@@ -20,6 +21,7 @@ export function authenticateHttp(role: "user" | "admin" = "user") {
 		}
 
 		const parsedToken = authorization.split(" ")[1];
+
 		if (!parsedToken) {
 			return res.unauthorized?.({ message: "Token is required" });
 		}
@@ -52,10 +54,13 @@ export async function authenticateSocket(
 
 	const token = cookies.token;
 
-	console.log("Cookies:", cookies);
-	console.log("Token:", token);
-
 	if (!token) {
+		return next(new Error("Token is required"));
+	}
+
+	const parsedToken = token.split(" ")[1];
+
+	if (!parsedToken) {
 		return next(new Error("Token is required"));
 	}
 
@@ -69,9 +74,11 @@ export async function authenticateSocket(
 		}
 
 		socket.data = decodedJWTUser.data;
+
 		next();
 	} catch (error) {
 		console.error(error);
+
 		next(new Error("Invalid token"));
 	}
 }
