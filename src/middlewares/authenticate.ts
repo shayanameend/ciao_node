@@ -1,3 +1,4 @@
+import { parse } from "cookie";
 import type { NextFunction } from "express";
 import { default as jwt } from "jsonwebtoken";
 import type { Socket } from "socket.io";
@@ -45,18 +46,21 @@ export async function authenticateSocket(
 	socket: Socket,
 	next: (err?: Error) => void,
 ) {
-	const token = socket.handshake.headers.token as string | undefined;
+	const cookieHeader = socket.handshake.headers.cookie || "";
+
+	const cookies = parse(cookieHeader);
+
+	const token = cookies.token;
+
+	console.log("Cookies:", cookies);
+	console.log("Token:", token);
+
 	if (!token) {
 		return next(new Error("Token is required"));
 	}
 
-	const parsedToken = token.split(" ")[1];
-	if (!parsedToken) {
-		return next(new Error("Invalid token"));
-	}
-
 	try {
-		const decodedToken = jwt.verify(parsedToken, env.JWT_SECRET);
+		const decodedToken = jwt.verify(token, env.JWT_SECRET);
 
 		const decodedJWTUser = jwtUserSchema.safeParse(decodedToken);
 
@@ -65,9 +69,9 @@ export async function authenticateSocket(
 		}
 
 		socket.data = decodedJWTUser.data;
+		next();
 	} catch (error) {
 		console.error(error);
+		next(new Error("Invalid token"));
 	}
-
-	next();
 }
