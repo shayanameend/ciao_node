@@ -17,7 +17,7 @@ export enum OtpType {
 	FORGET_PASSWORD = "forget-password",
 }
 
-export enum OsType {
+export enum Platform {
 	ANDROID = "android",
 	IOS = "ios",
 	LINUX = "linux",
@@ -26,7 +26,7 @@ export enum OsType {
 	WEB = "web",
 }
 
-export enum Roles {
+export enum Role {
 	ADMIN = "admin",
 	USER = "user",
 }

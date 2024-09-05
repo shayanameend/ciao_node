@@ -1,5 +1,5 @@
 import * as zod from "zod";
-import { OsType, OtpType, Roles, TokenType } from "../types.js";
+import { Platform, OtpType, Role, TokenType } from "../types.js";
 
 export const jwtUserSchema = zod.object({
 	id: zod
@@ -24,12 +24,12 @@ export const jwtUserSchema = zod.object({
 	}),
 	deviceType: zod.enum(
 		[
-			OsType.ANDROID,
-			OsType.IOS,
-			OsType.MACOS,
-			OsType.LINUX,
-			OsType.WINDOWS,
-			OsType.WEB,
+			Platform.ANDROID,
+			Platform.IOS,
+			Platform.MACOS,
+			Platform.LINUX,
+			Platform.WINDOWS,
+			Platform.WEB,
 		],
 		{
 			message:
@@ -56,7 +56,7 @@ export const registerUserBodySchema = zod.object({
 		.max(16, {
 			message: "Password should be at most 16 characters",
 		}),
-	role: zod.enum([Roles.ADMIN, Roles.USER], {
+	role: zod.enum([Role.ADMIN, Role.USER], {
 		message: "Only user and admin roles are supported",
 	}),
 	deviceToken: zod
@@ -68,12 +68,12 @@ export const registerUserBodySchema = zod.object({
 		}),
 	deviceType: zod.enum(
 		[
-			OsType.ANDROID,
-			OsType.IOS,
-			OsType.MACOS,
-			OsType.LINUX,
-			OsType.WINDOWS,
-			OsType.WEB,
+			Platform.ANDROID,
+			Platform.IOS,
+			Platform.MACOS,
+			Platform.LINUX,
+			Platform.WINDOWS,
+			Platform.WEB,
 		],
 		{
 			message:
@@ -111,12 +111,12 @@ export const forgetPasswordBodySchema = zod.object({
 	}),
 	deviceType: zod.enum(
 		[
-			OsType.ANDROID,
-			OsType.IOS,
-			OsType.MACOS,
-			OsType.LINUX,
-			OsType.WINDOWS,
-			OsType.WEB,
+			Platform.ANDROID,
+			Platform.IOS,
+			Platform.MACOS,
+			Platform.LINUX,
+			Platform.WINDOWS,
+			Platform.WEB,
 		],
 		{
 			message:
@@ -174,12 +174,12 @@ export const loginUserBodySchema = zod.object({
 		}),
 	deviceType: zod.enum(
 		[
-			OsType.ANDROID,
-			OsType.IOS,
-			OsType.MACOS,
-			OsType.LINUX,
-			OsType.WINDOWS,
-			OsType.WEB,
+			Platform.ANDROID,
+			Platform.IOS,
+			Platform.MACOS,
+			Platform.LINUX,
+			Platform.WINDOWS,
+			Platform.WEB,
 		],
 		{
 			message:
