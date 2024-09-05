@@ -9,7 +9,7 @@ import {
 	ResponseMessages,
 	TokenType,
 } from "../../types.js";
-import { sendEmail } from "../../utils/mail.js";
+import { sendEmail } from "../../utils/email.js";
 import { generateOTP } from "../../utils/otp.js";
 import { generateBodyForOTP } from "../../utils/templates.js";
 import {
