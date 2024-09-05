@@ -1,35 +1,23 @@
-import { CourierClient } from "@trycourier/courier";
+import nodemailer from "nodemailer";
 import { env } from "../env.js";
 
-const courier = new CourierClient({
-	authorizationToken: env.COURIER_AUTH_TOKEN,
+const transport = nodemailer.createTransport({
+	host: env.SMTP_HOST,
+	port: env.SMTP_PORT,
+	auth: {
+		user: env.SMTP_USERNAME,
+		pass: env.SMTP_PASSWORD,
+	},
 });
 
-export async function sendEmail({
-	name,
-	email,
-	body,
-}: {
-	name: string;
-	email: string;
+export interface Email {
+	to: string;
+	subject: string;
 	body: string;
-}) {
-	const { requestId } = await courier.send({
-		message: {
-			to: {
-				data: {
-					name,
-				},
-				email,
-			},
-			content: {
-				title: "Hey {{name}} 👋",
-				body,
-			},
-			routing: {
-				method: "single",
-				channels: ["email"],
-			},
-		},
-	});
 }
+
+export const sendEmail = async ({ to, subject, body }: Email) => {
+	const msg = { from: env.EMAIL_FROM, to, subject, body };
+
+	await transport.sendMail(msg);
+};
