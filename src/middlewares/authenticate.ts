@@ -1,4 +1,3 @@
-import { parse } from "cookie";
 import type { NextFunction } from "express";
 import { default as jwt } from "jsonwebtoken";
 import type { Socket } from "socket.io";
@@ -48,11 +47,7 @@ export async function authenticateSocket(
 	socket: Socket,
 	next: (err?: Error) => void,
 ) {
-	const cookieHeader = socket.handshake.headers.cookie || "";
-
-	const cookies = parse(cookieHeader);
-
-	const token = cookies.token;
+	const token = socket.handshake.headers.token as string | undefined;
 
 	if (!token) {
 		return next(new Error("Token is required"));

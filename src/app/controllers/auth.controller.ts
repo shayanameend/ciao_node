@@ -93,8 +93,8 @@ export async function register(req: ExtendedRequest, res: ExtendedResponse) {
 		});
 
 		await sendEmail({
-			name: "",
-			email: user.email,
+			to: user.email,
+			subject: "Verify Your Email",
 			body: generateBodyForOTP(otp.code),
 		});
 
@@ -185,8 +185,8 @@ export async function resendOTP(req: ExtendedRequest, res: ExtendedResponse) {
 		});
 
 		await sendEmail({
-			name: "",
-			email: req.user.email,
+			to: req.user.email,
+			subject: "Verify Your Email",
 			body: generateBodyForOTP(otp.code),
 		});
 
@@ -614,8 +614,8 @@ export async function login(req: ExtendedRequest, res: ExtendedResponse) {
 			});
 
 			await sendEmail({
-				name: "",
-				email: user.email,
+				to: user.email,
+				subject: "Verify Your Email",
 				body: generateBodyForOTP(otp.code),
 			});
 
