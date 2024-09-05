@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import type { Server as HttpServer } from "node:http";
 import { createServer as createDevelopmentServer } from "node:http";
 import { createServer as createProductionServer } from "node:https";
@@ -24,8 +25,9 @@ switch (env.NODE_ENV) {
 		console.log(chalk.blue("Setting Up Production Https Server"));
 		httpServer = createProductionServer(
 			{
-				cert: env.SSL_CERT,
-				key: env.SSL_KEY,
+				cert: readFileSync(env.SSL_CERT ?? "./ssl/cert.pem"),
+				key: readFileSync(env.SSL_KEY ?? "./ssl/key.pem"),
+				ca: readFileSync(env.SSL_CA ?? "./ssl/ca.pem"),
 			},
 			app,
 		);
