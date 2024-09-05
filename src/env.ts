@@ -25,25 +25,21 @@ export const envSchema = zod.object({
 			message: "Valid Database URL is Required",
 		})
 		.default("file:../db/dev.db"),
-	HTTPS: zod.coerce
-		.boolean({
-			message: "Valid HTTPS Setting is Required",
+	SSL_CERT: zod
+		.string({
+			message: "Valid SSL Certificate",
 		})
-		.default(false),
-	AUTO_SSL_SETTING: zod.coerce
-		.boolean({
-			message: "Valid Auto SSL Setting is Required",
+		.optional(),
+	SSL_KEY: zod
+		.string({
+			message: "Valid SSL Key is Required",
 		})
-		.default(true),
-	SSL_CERT: zod.string({
-		message: "Valid SSL Certificate",
-	}),
-	SSL_KEY: zod.string({
-		message: "Valid SSL Key is Required",
-	}),
-	SSL_CA: zod.string({
-		message: "Valid SSL CA is Required",
-	}),
+		.optional(),
+	SSL_CA: zod
+		.string({
+			message: "Valid SSL CA is Required",
+		})
+		.optional(),
 	JWT_SECRET: zod
 		.string({
 			message: "Valid JWT Secret is Required",
