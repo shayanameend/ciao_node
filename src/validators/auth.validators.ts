@@ -28,11 +28,12 @@ export const jwtUserSchema = zod.object({
 			OsType.IOS,
 			OsType.MACOS,
 			OsType.LINUX,
-			OsType.MACOS,
+			OsType.WINDOWS,
 			OsType.WEB,
 		],
 		{
-			message: "Only Android and iOS devices are supported",
+			message:
+				"Only Android, iOS, MacOS, Linux, Windows, and Web platforms are supported",
 		},
 	),
 });
@@ -71,19 +72,19 @@ export const registerUserBodySchema = zod.object({
 			OsType.IOS,
 			OsType.MACOS,
 			OsType.LINUX,
-			OsType.MACOS,
+			OsType.WINDOWS,
 			OsType.WEB,
 		],
 		{
-			message: "Only Android and iOS devices are supported",
+			message:
+				"Only Android, iOS, MacOS, Linux, Windows, and Web platforms are supported",
 		},
 	),
 });
 
 export const resendOTPBodySchema = zod.object({
 	verificationType: zod.enum([OtpType.REGISTRATION, OtpType.FORGET_PASSWORD], {
-		message:
-			"Only registeration and forgotPassword verification types are supported",
+		message: "Only Android, iOS, MacOS, Linux, and Web platforms are supported",
 	}),
 });
 
@@ -93,7 +94,7 @@ export const verifyOTPBodySchema = zod.object({
 	}),
 	verificationType: zod.enum([OtpType.REGISTRATION, OtpType.FORGET_PASSWORD], {
 		message:
-			"Only registeration and forgotPassword verification types are supported",
+			"Only registeration and forgot-password verification types are supported",
 	}),
 });
 
@@ -114,11 +115,12 @@ export const forgetPasswordBodySchema = zod.object({
 			OsType.IOS,
 			OsType.MACOS,
 			OsType.LINUX,
-			OsType.MACOS,
+			OsType.WINDOWS,
 			OsType.WEB,
 		],
 		{
-			message: "Only Android and iOS devices are supported",
+			message:
+				"Only Android, iOS, MacOS, Linux, Windows, and Web platforms are supported",
 		},
 	),
 });
@@ -176,11 +178,12 @@ export const loginUserBodySchema = zod.object({
 			OsType.IOS,
 			OsType.MACOS,
 			OsType.LINUX,
-			OsType.MACOS,
+			OsType.WINDOWS,
 			OsType.WEB,
 		],
 		{
-			message: "Only Android and iOS devices are supported",
+			message:
+				"Only Android, iOS, MacOS, Linux, Windows, and Web platforms are supported",
 		},
 	),
 });
