@@ -17,6 +17,11 @@ export const envSchema = zod.object({
 			message: "Valid Port is Required",
 		})
 		.default(3000),
+	APP_NAME: zod
+		.string({
+			message: "Valid App Name is Required",
+		})
+		.default("Node Backend"),
 	DATABASE_URL: zod
 		.string({
 			message: "Valid Database URL is Required",

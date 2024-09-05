@@ -2,7 +2,6 @@ import type { Server as HttpServer } from "node:http";
 import { createServer as createDevelopmentServer } from "node:http";
 import { createServer as createProductionServer } from "node:https";
 import { default as chalk } from "chalk";
-import cookieParser from "cookie-parser";
 import { default as cors } from "cors";
 import { type Express, default as express } from "express";
 import { default as morgan } from "morgan";
@@ -40,15 +39,9 @@ switch (env.NODE_ENV) {
 console.log(chalk.blue("Setting Up Express App"));
 app.use(
 	cors({
-		origin: [
-			"http://localhost:3000",
-			"http://192.168.100.85:3000",
-			"http://192.168.100.86:3000",
-		],
-		credentials: true,
+		origin: "*",
 	}),
 );
-app.use(cookieParser());
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -61,20 +54,7 @@ app.use(appRouter);
 console.log(chalk.blue("Setting Up Socket IO"));
 export const io: SocketServer = new SocketServer(httpServer, {
 	cors: {
-		origin: [
-			"http://localhost:3000",
-			"http://192.168.100.85:3000",
-			"http://192.168.100.86:3000",
-		],
-		methods: ["GET", "POST"],
-		credentials: true,
-	},
-	cookie: {
-		name: "io",
-		httpOnly: true,
-		secure: env.NODE_ENV === NodeEnv.PRODUCTION,
-		maxAge: 1000 * 60 * 60 * 24 * 7,
-		sameSite: "strict",
+		origin: "*",
 	},
 });
 
