@@ -2,6 +2,8 @@ import { default as argon } from "argon2";
 import { default as jwt } from "jsonwebtoken";
 import { db } from "../lib/db.js";
 import { env } from "../lib/env.js";
+import { upsertDevice } from "../services/device.service.js";
+import { createOtp } from "../services/otp.service.js";
 import {
 	type ExtendedRequest,
 	type ExtendedResponse,
@@ -55,41 +57,18 @@ export async function register(req: ExtendedRequest, res: ExtendedResponse) {
 			},
 		});
 
-		const device = await db.device.upsert({
-			where: {
-				token: deviceToken,
-			},
-			create: {
-				token: deviceToken,
-				os: deviceType,
-				user: {
-					connect: {
-						id: user.id,
-					},
-				},
-			},
-			update: {
-				isActive: true,
-				user: {
-					connect: {
-						id: user.id,
-					},
-				},
-			},
+		const { device } = await upsertDevice({
+			user,
+			devicePlatform: deviceType,
+			deviceToken,
 		});
 
 		const otpCode = generateOTP(8);
 
-		const otp = await db.otp.create({
-			data: {
-				code: otpCode,
-				type: OtpType.REGISTRATION,
-				user: {
-					connect: {
-						id: user.id,
-					},
-				},
-			},
+		const { otp } = await createOtp({
+			user,
+			otpType: OtpType.REGISTRATION,
+			otpCode,
 		});
 
 		await sendMail({
