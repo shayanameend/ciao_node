@@ -1,9 +1,9 @@
 import type { NextFunction } from "express";
 import { default as jwt } from "jsonwebtoken";
 import type { Socket } from "socket.io";
-import { env } from "../env.js";
-import type { ExtendedRequest, ExtendedResponse } from "../types.js";
-import { jwtUserSchema } from "../validators/auth.validators.js";
+import { env } from "../lib/env.js";
+import type { ExtendedRequest, ExtendedResponse } from "../types/misc.js";
+import { jwtUserSchema } from "../validators/auth.validator.js";
 
 export function authenticateHttp(role: "user" | "admin" = "user") {
 	return async (

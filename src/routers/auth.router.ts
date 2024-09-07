@@ -1,6 +1,5 @@
 import { Router } from "express";
-import { authenticateHttp } from "../../middlewares/authenticate.js";
-import { default as routes } from "../../routes.js";
+import { default as routes } from "../constants/routes.js";
 import {
 	changePassword,
 	createProfile,
@@ -12,6 +11,7 @@ import {
 	resetPassword,
 	verifyOTP,
 } from "../controllers/auth.controller.js";
+import { authenticateHttp } from "../middlewares/authenticate.js";
 
 const authRouter: Router = Router();
 

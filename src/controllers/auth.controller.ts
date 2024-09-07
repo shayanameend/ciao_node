@@ -1,17 +1,17 @@
 import { default as argon } from "argon2";
 import { default as jwt } from "jsonwebtoken";
-import { db } from "../../db.js";
-import { env } from "../../env.js";
+import { db } from "../lib/db.js";
+import { env } from "../lib/env.js";
 import {
 	type ExtendedRequest,
 	type ExtendedResponse,
 	OtpType,
 	ResponseMessages,
 	TokenType,
-} from "../../types.js";
-import { sendEmail } from "../../utils/email.js";
-import { generateOTP } from "../../utils/otp.js";
-import { generateBodyForOTP } from "../../utils/templates.js";
+} from "../types/misc.js";
+import { sendMail } from "../utils/mail.js";
+import { generateOTP } from "../utils/otp.js";
+import { generateBodyForOTP } from "../utils/templates.js";
 import {
 	changePasswordBodySchema,
 	createProfileBodySchema,
@@ -21,7 +21,7 @@ import {
 	resendOTPBodySchema,
 	resetPasswordBodySchema,
 	verifyOTPBodySchema,
-} from "../../validators/auth.validators.js";
+} from "../validators/auth.validator.js";
 
 export async function register(req: ExtendedRequest, res: ExtendedResponse) {
 	try {
@@ -92,7 +92,7 @@ export async function register(req: ExtendedRequest, res: ExtendedResponse) {
 			},
 		});
 
-		await sendEmail({
+		await sendMail({
 			to: user.email,
 			subject: "Verify Your Email",
 			body: generateBodyForOTP(otp.code),
@@ -184,7 +184,7 @@ export async function resendOTP(req: ExtendedRequest, res: ExtendedResponse) {
 			},
 		});
 
-		await sendEmail({
+		await sendMail({
 			to: req.user.email,
 			subject: "Verify Your Email",
 			body: generateBodyForOTP(otp.code),
@@ -613,7 +613,7 @@ export async function login(req: ExtendedRequest, res: ExtendedResponse) {
 				},
 			});
 
-			await sendEmail({
+			await sendMail({
 				to: user.email,
 				subject: "Verify Your Email",
 				body: generateBodyForOTP(otp.code),

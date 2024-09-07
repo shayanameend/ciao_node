@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-import { env } from "../env.js";
+import { env } from "../lib/env.js";
 
 const transport = nodemailer.createTransport({
 	host: env.SMTP_HOST,
@@ -16,8 +16,8 @@ export interface Email {
 	body: string;
 }
 
-export const sendEmail = async ({ to, subject, body }: Email) => {
-	const msg = { from: env.EMAIL_FROM, to, subject, body };
+export const sendMail = async ({ to, subject, body }: Email) => {
+	const msg = { from: env.ADMIN_EMAIL, to, subject, body };
 
 	await transport.sendMail(msg);
 };

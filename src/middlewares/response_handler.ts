@@ -1,6 +1,6 @@
 import { type ColorName, default as chalk } from "chalk";
 import type { NextFunction } from "express";
-import type { Data, ExtendedRequest, ExtendedResponse } from "../types.js";
+import type { Data, ExtendedRequest, ExtendedResponse } from "../types/misc.js";
 
 export function responseHandler({ debugLevel }: { debugLevel: 0 | 1 | 2 | 3 }) {
 	return async (

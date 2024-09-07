@@ -8,13 +8,13 @@ import { type Express, default as express } from "express";
 import { default as morgan } from "morgan";
 import type { Socket } from "socket.io";
 import { Server as SocketServer } from "socket.io";
-import { appRouter } from "./app.js";
-import { env } from "./env.js";
-import { default as events } from "./events.js";
+import { default as events } from "./constants/events.js";
+import { appRouter } from "./lib/app.js";
+import { env } from "./lib/env.js";
+import { useSocketIO } from "./lib/socket.js";
 import { authenticateSocket } from "./middlewares/authenticate.js";
 import { responseHandler } from "./middlewares/response_handler.js";
-import { useSocketIO } from "./socket.js";
-import { NodeEnv } from "./types.js";
+import { NodeEnv } from "./types/misc.js";
 
 const app: Express = express();
 

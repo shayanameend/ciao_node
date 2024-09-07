@@ -1,8 +1,13 @@
 import * as zod from "zod";
-import { NodeEnv } from "./types.js";
+import { NodeEnv } from "../types/misc.js";
 
 export const envSchema = zod
 	.object({
+		NAME: zod
+			.string({
+				message: "Valid Name is Required",
+			})
+			.default("Node Backend"),
 		NODE_ENV: zod
 			.enum([NodeEnv.DEVELOPMENT, NodeEnv.PRODUCTION], {
 				message: "Valid NODE_ENV is Required",
@@ -18,11 +23,6 @@ export const envSchema = zod
 				message: "Valid Port is Required",
 			})
 			.default(3000),
-		APP_NAME: zod
-			.string({
-				message: "Valid App Name is Required",
-			})
-			.default("Node Backend"),
 		DATABASE_URL: zod
 			.string({
 				message: "Valid Database URL is Required",
@@ -65,12 +65,12 @@ export const envSchema = zod
 			.number({
 				message: "Valid JWT Verify Email Expiration is Required",
 			})
-			.default(30),
+			.default(1),
 		JWT_RESET_PASSWORD_EXPIRATION_MINUTES: zod.coerce
 			.number({
 				message: "Valid JWT Reset Password Expiration is Required",
 			})
-			.default(30),
+			.default(1),
 		SMTP_HOST: zod.string({
 			message: "Valid SMTP Host is Required",
 		}),
@@ -83,7 +83,7 @@ export const envSchema = zod
 		SMTP_PASSWORD: zod.string({
 			message: "Valid SMTP Password is Required",
 		}),
-		EMAIL_FROM: zod
+		ADMIN_EMAIL: zod
 			.string({
 				message: "Valid Email From is Required",
 			})
@@ -96,6 +96,7 @@ export const envSchema = zod
 			if (data.NODE_ENV === NodeEnv.PRODUCTION) {
 				return !!data.SSL_CERT && !!data.SSL_KEY && !!data.SSL_CA;
 			}
+
 			return true;
 		},
 		{

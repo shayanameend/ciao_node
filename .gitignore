@@ -180,3 +180,6 @@ dist
 
 # prisma
 .db/
+
+# MacOS
+.DS_Store

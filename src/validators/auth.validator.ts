@@ -1,5 +1,5 @@
 import * as zod from "zod";
-import { Platform, OtpType, Role, TokenType } from "../types.js";
+import { OtpType, Platform, Role, TokenType } from "../types/misc.js";
 
 export const jwtUserSchema = zod.object({
 	id: zod
