@@ -12,29 +12,41 @@ import {
 	verifyOTP,
 } from "../controllers/auth.controller.js";
 import { authenticateHttp } from "../middlewares/authenticate.js";
+import { asyncCatch } from "../utils/async-catch.js";
 
 const authRouter: Router = Router();
 
-authRouter.post(routes.auth.register, register);
-authRouter.post(routes.auth.resend, authenticateHttp("user"), resendOTP);
-authRouter.post(routes.auth.verify, authenticateHttp("user"), verifyOTP);
-authRouter.post(routes.auth.forgetPasswordRequest, requestForgetPassword);
+authRouter.post(routes.auth.register, asyncCatch(register));
+authRouter.post(
+	routes.auth.resend,
+	authenticateHttp("user"),
+	asyncCatch(resendOTP),
+);
+authRouter.post(
+	routes.auth.verify,
+	authenticateHttp("user"),
+	asyncCatch(verifyOTP),
+);
+authRouter.post(
+	routes.auth.forgetPasswordRequest,
+	asyncCatch(requestForgetPassword),
+);
 authRouter.post(
 	routes.auth.resetPassword,
 	authenticateHttp("user"),
-	resetPassword,
+	asyncCatch(resetPassword),
 );
 authRouter.post(
 	routes.auth.createProfile,
 	authenticateHttp("user"),
-	createProfile,
+	asyncCatch(createProfile),
 );
 authRouter.post(routes.auth.login, login);
 authRouter.post(routes.auth.logout, authenticateHttp("user"), logout);
 authRouter.post(
 	routes.auth.changePassword,
 	authenticateHttp("user"),
-	changePassword,
+	asyncCatch(changePassword),
 );
 
 export { authRouter };

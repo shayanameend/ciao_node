@@ -3,7 +3,10 @@ import { default as jwt } from "jsonwebtoken";
 import { db } from "../lib/db.js";
 import { env } from "../lib/env.js";
 import { upsertDevice } from "../services/device.service.js";
+import { signToken } from "../services/jwt.service.js";
 import { createOtp } from "../services/otp.service.js";
+import { hashPassword } from "../services/password.service.js";
+import { createUser, getUserByEmail } from "../services/user.service.js";
 import {
 	type ExtendedRequest,
 	type ExtendedResponse,
@@ -14,6 +17,7 @@ import {
 import { sendMail } from "../utils/mail.js";
 import { generateOTP } from "../utils/otp.js";
 import { generateBodyForOTP } from "../utils/templates.js";
+import { validate } from "../utils/validation.js";
 import {
 	changePasswordBodySchema,
 	createProfileBodySchema,
@@ -26,89 +30,70 @@ import {
 } from "../validators/auth.validator.js";
 
 export async function register(req: ExtendedRequest, res: ExtendedResponse) {
-	try {
-		const parsedBody = registerUserBodySchema.safeParse(req.body);
+	const parsedBody = registerUserBodySchema.safeParse(req.body);
 
-		if (!parsedBody.success) {
-			return res.badRequest?.({ message: parsedBody.error.errors[0].message });
-		}
+	if (!parsedBody.success) {
+		return res.badRequest?.({ message: parsedBody.error.errors[0].message });
+	}
 
-		const { email, password, role, deviceToken, deviceType } = parsedBody.data;
+	const { email, password, role, deviceToken, deviceType } = parsedBody.data;
 
-		const existingUser = await db.user.findUnique({
-			where: {
-				email,
-			},
-		});
+	const { user: existingUser } = await getUserByEmail({ email });
 
-		if (existingUser) {
-			return res.badRequest?.({
-				message: ResponseMessages.USER_ALREADY_EXISTS,
-			});
-		}
-
-		const hashedPassword = await argon.hash(password);
-
-		const user = await db.user.create({
-			data: {
-				email,
-				password: hashedPassword,
-				role,
-			},
-		});
-
-		const { device } = await upsertDevice({
-			user,
-			devicePlatform: deviceType,
-			deviceToken,
-		});
-
-		const otpCode = generateOTP(8);
-
-		const { otp } = await createOtp({
-			user,
-			otpType: OtpType.REGISTRATION,
-			otpCode,
-		});
-
-		await sendMail({
-			to: user.email,
-			subject: "Verify Your Email",
-			body: generateBodyForOTP(otp.code),
-		});
-
-		const jwtToken = jwt.sign(
-			{
-				id: user.id,
-				email: user.email,
-				tokenType: TokenType.VERIFICATION,
-				deviceToken: device.token,
-				deviceType: device.os,
-			},
-			env.JWT_SECRET,
-		);
-
-		return res.created?.({
-			data: {
-				user: {
-					id: user.id,
-					email: user.email,
-				},
-				token: jwtToken,
-			},
-			message: ResponseMessages.USER_REGISTERED_SUCCESSFULLY,
-		});
-	} catch (error) {
-		console.error(error);
-
-		if (error instanceof Error) {
-			return res.internalServerError?.({ message: error.message });
-		}
-
-		return res.internalServerError?.({
-			message: ResponseMessages.SOMETHING_WENT_WRONG,
+	if (existingUser) {
+		return res.badRequest?.({
+			message: ResponseMessages.USER_ALREADY_EXISTS,
 		});
 	}
+
+	const { hashedPassword } = await hashPassword({ password });
+
+	const { user } = await createUser({
+		email,
+		password: hashedPassword,
+		role,
+	});
+
+	const { device } = await upsertDevice({
+		user,
+		devicePlatform: deviceType,
+		deviceToken,
+	});
+
+	const otpCode = generateOTP(8);
+
+	const { otp } = await createOtp({
+		user,
+		otpType: OtpType.REGISTRATION,
+		otpCode,
+	});
+
+	await sendMail({
+		to: user.email,
+		subject: "Verify Your Email",
+		body: generateBodyForOTP(otp.code),
+	});
+
+	const { token } = signToken({
+		payload: {
+			id: user.id,
+			email: user.email,
+			tokenType: TokenType.VERIFICATION,
+			deviceToken: device.token,
+			deviceType: device.os,
+		},
+	});
+
+	return res.created?.({
+		data: {
+			user: {
+				id: user.id,
+				email: user.email,
+			},
+			token,
+		},
+		message: ResponseMessages.USER_REGISTERED_SUCCESSFULLY,
+	});
 }
 
 export async function resendOTP(req: ExtendedRequest, res: ExtendedResponse) {
@@ -119,13 +104,12 @@ export async function resendOTP(req: ExtendedRequest, res: ExtendedResponse) {
 			});
 		}
 
-		const parsedBody = resendOTPBodySchema.safeParse(req.body);
+		const { parsedData } = validate({
+			schema: resendOTPBodySchema,
+			data: req.body,
+		});
 
-		if (!parsedBody.success) {
-			return res.badRequest?.({ message: parsedBody.error.errors[0].message });
-		}
-
-		const { verificationType } = parsedBody.data;
+		const { verificationType } = parsedData;
 
 		if (verificationType === OtpType.REGISTRATION) {
 			const userAlreadyVerified = await db.user.findUnique({
