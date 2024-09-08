@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { default as routes } from "../constants/routes.js";
+import { routes } from "../constants/routes.js";
 import {
 	changePassword,
 	createProfile,
@@ -11,8 +11,8 @@ import {
 	resetPassword,
 	verifyOTP,
 } from "../controllers/auth.controller.js";
+import { asyncCatch } from "../middlewares/async-catch.js";
 import { authenticateHttp } from "../middlewares/authenticate.js";
-import { asyncCatch } from "../utils/async-catch.js";
 
 const authRouter: Router = Router();
 

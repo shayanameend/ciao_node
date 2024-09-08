@@ -30,13 +30,10 @@ import {
 } from "../validators/auth.validator.js";
 
 export async function register(req: ExtendedRequest, res: ExtendedResponse) {
-	const parsedBody = registerUserBodySchema.safeParse(req.body);
-
-	if (!parsedBody.success) {
-		return res.badRequest?.({ message: parsedBody.error.errors[0].message });
-	}
-
-	const { email, password, role, deviceToken, deviceType } = parsedBody.data;
+	const { email, password, role, deviceToken, deviceType } = validate({
+		schema: registerUserBodySchema,
+		data: req.body,
+	});
 
 	const { user: existingUser } = await getUserByEmail({ email });
 
@@ -104,12 +101,10 @@ export async function resendOTP(req: ExtendedRequest, res: ExtendedResponse) {
 			});
 		}
 
-		const { parsedData } = validate({
+		const { verificationType } = validate({
 			schema: resendOTPBodySchema,
 			data: req.body,
 		});
-
-		const { verificationType } = parsedData;
 
 		if (verificationType === OtpType.REGISTRATION) {
 			const userAlreadyVerified = await db.user.findUnique({

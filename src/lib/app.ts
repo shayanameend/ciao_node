@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { default as routes } from "../constants/routes.js";
-import { authRouter as appAuthRouter } from "../routers/auth.router.js";
+import { routes } from "../constants/routes.js";
+import { authRouter } from "../routers/auth.router.js";
 
 const appRouter: Router = Router();
 
-appRouter.use(routes.express.app, appAuthRouter);
+appRouter.use(routes.root, authRouter);
 
 export { appRouter };

@@ -1,8 +1,5 @@
-export default {
-	express: {
-		app: "/app",
-		dashboard: "/dashboard",
-	},
+export const routes = {
+	root: "/",
 	auth: {
 		register: "/register",
 		resend: "/resend",

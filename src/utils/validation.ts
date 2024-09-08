@@ -5,15 +5,6 @@ interface ValidateProps<T> {
 	data: unknown;
 }
 
-interface ValidateReturns<T> {
-	parsedData: T;
-}
-
-export function validate<T>({
-	schema,
-	data,
-}: ValidateProps<T>): ValidateReturns<T> {
-	const parsedData = schema.parse(data);
-
-	return { parsedData };
+export function validate<T>({ schema, data }: ValidateProps<T>): T {
+	return schema.parse(data);
 }
